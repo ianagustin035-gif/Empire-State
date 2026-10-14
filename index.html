@@ -1,0 +1,1359 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100 select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech & AI Cyber Empire - Tycoon Vicioso</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#080d1a',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            neonCyan: '#06b6d4',
+                            neonGreen: '#10b981',
+                            neonPurple: '#8b5cf6',
+                            neonGold: '#f59e0b',
+                            neonPink: '#ec4899'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Animaciones personalizadas */
+        @keyframes floatText {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { opacity: 0.8; transform: translateY(-25px) scale(1.1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+        }
+        .float-text {
+            position: absolute;
+            pointer-events: none;
+            animation: floatText 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            font-weight: 800;
+            z-index: 50;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.8); }
+        }
+        .glow-cyan { animation: pulseGlow 3s infinite; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080d1a; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans overflow-hidden bg-slate-950 text-slate-200">
+
+    <!-- HEADER / BARRA SUPERIOR -->
+    <header class="bg-slate-900/90 border-b border-slate-800 p-3 sm:p-4 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Branding -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg shadow-cyan-500/30">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 uppercase">
+                        CYBER EMPIRE <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/50">v2.5</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-building text-cyan-500"></i> <span id="company-name">Tech Corp Inc.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dashboard de Recursos -->
+            <div class="flex items-center gap-4 sm:gap-6 bg-slate-950/80 px-4 py-2 rounded-xl border border-slate-800/80">
+                <!-- Balance $ -->
+                <div class="text-right">
+                    <div class="text-[10px] uppercase font-mono tracking-wider text-slate-400">Capital Disponible</div>
+                    <div class="text-lg sm:text-2xl font-black text-emerald-400 font-mono tracking-tight" id="stat-cash">$0</div>
+                </div>
+                
+                <div class="h-8 w-px bg-slate-800"></div>
+
+                <!-- Ingresos por segundo -->
+                <div class="text-right">
+                    <div class="text-[10px] uppercase font-mono tracking-wider text-slate-400">Rendimiento Sec</div>
+                    <div class="text-xs sm:text-base font-bold text-cyan-400 font-mono" id="stat-income">$0/s</div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-800"></div>
+
+                <!-- Crypto/Tokens de Prestigio -->
+                <div class="text-right">
+                    <div class="text-[10px] uppercase font-mono tracking-wider text-slate-400">Tokens Cyber</div>
+                    <div class="text-xs sm:text-base font-bold text-purple-400 font-mono flex items-center justify-end gap-1" id="stat-tokens">
+                        <i class="fa-solid fa-coins text-xs"></i> 0
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones globales (Sonido, Guardar, Config) -->
+            <div class="flex items-center gap-2">
+                <button id="btn-audio" onclick="toggleAudio()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700/50" title="Activar/Desactivar Sonido">
+                    <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+                </button>
+                <button onclick="manualSave()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700/50" title="Guardar Partida">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </button>
+                <button onclick="openResetModal()" class="p-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 transition-colors border border-red-800/40" title="Reiniciar Juego">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL DEL JUEGO -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-4 p-3 sm:p-4 overflow-hidden">
+
+        <!-- PANELS DE NAVEGACIÓN Y TABS -->
+        <div class="flex-1 flex flex-col min-h-0 bg-slate-900/50 rounded-2xl border border-slate-800/80 backdrop-blur-sm overflow-hidden">
+            
+            <!-- BARRA DE PESTAÑAS (TABS) -->
+            <div class="flex border-b border-slate-800 bg-slate-950/50 p-1.5 gap-1 overflow-x-auto">
+                <button onclick="switchTab('businesses')" id="tab-btn-businesses" class="tab-btn active flex-1 min-w-[110px] py-2 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30">
+                    <i class="fa-solid fa-server"></i> Empresas
+                </button>
+                <button onclick="switchTab('upgrades')" id="tab-btn-upgrades" class="tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-bolt"></i> Mejo<span class="hidden sm:inline">ras</span>
+                </button>
+                <button onclick="switchTab('managers')" id="tab-btn-managers" class="tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-user-gear"></i> Gerentes
+                </button>
+                <button onclick="switchTab('prestige')" id="tab-btn-prestige" class="tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl font-semibold text-xs sm:text-sm text-purple-400 hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-rocket"></i> IPO <span class="hidden sm:inline">/ Prestigio</span>
+                </button>
+                <button onclick="switchTab('stats')" id="tab-btn-stats" class="tab-btn flex-1 min-w-[90px] py-2 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-chart-line"></i> Stats
+                </button>
+            </div>
+
+            <!-- CONTENIDO DE TABS -->
+            <div class="flex-1 p-3 sm:p-4 overflow-y-auto relative" id="tab-container">
+
+                <!-- 1. TAB EMPRESAS / GENERADORES -->
+                <div id="tab-businesses" class="tab-content space-y-3">
+                    <!-- Selector de Multiplicador de Compra -->
+                    <div class="flex items-center justify-between bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs mb-3">
+                        <span class="text-slate-400 font-medium">Modo de Compra Nivel:</span>
+                        <div class="flex gap-1" id="buy-multiplier-container">
+                            <button onclick="setBuyMultiplier(1)" class="buy-mult-btn active px-3 py-1 rounded-lg bg-cyan-600 text-white font-bold transition-all">x1</button>
+                            <button onclick="setBuyMultiplier(10)" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">x10</button>
+                            <button onclick="setBuyMultiplier(25)" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">x25</button>
+                            <button onclick="setBuyMultiplier('MAX')" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">MAX</button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Empresas -->
+                    <div id="businesses-list" class="space-y-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- 2. TAB MEJORAS -->
+                <div id="tab-upgrades" class="tab-content hidden space-y-3">
+                    <div class="text-xs text-slate-400 mb-2">Compres mejoras de software, hardware y marketing para potenciar masivamente los ingresos.</div>
+                    <div id="upgrades-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- 3. TAB GERENTES -->
+                <div id="tab-managers" class="tab-content hidden space-y-3">
+                    <div class="text-xs text-slate-400 mb-2">Contratá gerentes automatizadores para hacer cobro automático y acelerar operaciones sin mover un dedo.</div>
+                    <div id="managers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- 4. TAB PRESTIGIO / IPO -->
+                <div id="tab-prestige" class="tab-content hidden space-y-4">
+                    <div class="bg-gradient-to-r from-purple-950/50 to-slate-900 border border-purple-800/40 rounded-2xl p-4 text-center">
+                        <i class="fa-solid fa-building-columns text-4xl text-purple-400 mb-2"></i>
+                        <h2 class="text-xl font-black text-purple-300">Oferta Pública Inicial (IPO) & Prestigio</h2>
+                        <p class="text-xs text-slate-300 mt-1 max-w-lg mx-auto">
+                            Reorganizá tu corporación para salir a la bolsa. Perderás tus empresas, nivel y efectivo actual, pero obtendrás <span class="text-purple-300 font-bold">Tokens Cyber</span> que multiplican tus ganancias globales para siempre.
+                        </p>
+                        
+                        <div class="mt-4 p-3 bg-slate-950/80 rounded-xl border border-purple-900/50 inline-block">
+                            <div class="text-xs text-slate-400">Tokens a reclamar ahora mismo:</div>
+                            <div id="prestige-claimable" class="text-2xl font-black text-purple-400 font-mono my-1">+0 Tokens</div>
+                            <div class="text-[10px] text-purple-300/70" id="prestige-current-bonus">Multiplicador global actual: x1.00</div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button id="btn-do-prestige" onclick="executePrestige()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-purple-600/30 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                                REALIZAR IPO / REINICIAR CON TOKEN
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MEJORAS DE ASCENSIÓN (CON TOKENS) -->
+                    <h3 class="text-sm font-bold text-slate-300 mt-6 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-purple-400"></i> Perks Cyberneticos Permanentes
+                    </h3>
+                    <div id="ascension-upgrades-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- 5. TAB STATS -->
+                <div id="tab-stats" class="tab-content hidden space-y-3">
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3 font-mono text-xs">
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-slate-400">Efectivo Total Producido:</span>
+                            <span id="stat-total-cash" class="text-emerald-400 font-bold">$0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-slate-400">Clics Totales Realizados:</span>
+                            <span id="stat-total-clicks" class="text-cyan-400 font-bold">0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-slate-400">Efectivo por Clics:</span>
+                            <span id="stat-click-earnings" class="text-cyan-400 font-bold">$0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-slate-400">Reinicios IPO / Reorganización:</span>
+                            <span id="stat-prestige-count" class="text-purple-400 font-bold">0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-slate-400">Eventos de Crisis Resueltos:</span>
+                            <span id="stat-events-solved" class="text-amber-400 font-bold">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Tiempo Jugado Total:</span>
+                            <span id="stat-time-played" class="text-slate-200 font-bold">0m</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO: SERVIDOR MANUAL / CLICKER & EVENTOS EN VIVO -->
+        <div class="w-full md:w-80 lg:w-96 flex flex-col gap-4">
+            
+            <!-- PANEL CLICKER PRINCIPAL -->
+            <div class="bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-xl">
+                <!-- Efecto visual decorativo de fondo -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+                
+                <span class="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-1">Servidor Cuántico Central</span>
+                <h3 class="text-sm font-bold text-slate-300 mb-3">Minado Manual de Datos</h3>
+
+                <!-- BOTÓN PRINCIPAL DE CLIC -->
+                <button id="main-click-btn" onclick="handleManualClick(event)" class="relative group w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-slate-900 border-4 border-cyan-500/40 hover:border-cyan-400 flex flex-col items-center justify-center shadow-2xl transition-all transform active:scale-90 hover:scale-105 cursor-pointer glow-cyan my-2">
+                    <div class="absolute inset-0 rounded-full bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-all"></div>
+                    <i class="fa-solid fa-terminal text-4xl sm:text-5xl text-cyan-400 mb-1 group-hover:text-cyan-300 transition-colors"></i>
+                    <span class="text-[10px] font-mono text-cyan-300/80 uppercase font-bold tracking-wider">EJECUTAR</span>
+                    <span class="text-xs font-black text-emerald-400 font-mono mt-0.5" id="click-power-text">+$1</span>
+                </button>
+
+                <p class="text-[11px] text-slate-400 mt-2">Hacé clic para generar capital instantáneo y potenciar los ciclos.</p>
+            </div>
+
+            <!-- EVENTO EN VIVO / MINI CRISIS EN TIEMPO REAL -->
+            <div id="live-event-card" class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 relative overflow-hidden transition-all hidden">
+                <div class="flex items-center gap-3 mb-2">
+                    <div id="event-icon-bg" class="p-2 rounded-xl bg-amber-500/20 text-amber-400 text-lg">
+                        <i class="fa-solid fa-triangle-exclamation" id="event-icon"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400" id="event-title">EVENTO DETECTADO</h4>
+                        <div class="text-xs font-semibold text-slate-200" id="event-name">Tendencia Viral Cyber</div>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-300 mb-3" id="event-desc">
+                    ¡Subió la demanda en redes! Resolvé el desafío rápidamente para obtener un bono.
+                </p>
+                <button id="event-action-btn" onclick="resolveLiveEvent()" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all uppercase tracking-wider shadow-lg shadow-amber-500/20">
+                    Aprovechar Oportunidad
+                </button>
+            </div>
+
+            <!-- FEED DE ACTIVIDAD DE LA EMPRESA -->
+            <div class="flex-1 bg-slate-900/40 rounded-2xl border border-slate-800/80 p-3 flex flex-col min-h-[160px]">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+                    <span>Logs de la Corporación</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                </div>
+                <div id="activity-log" class="flex-1 overflow-y-auto space-y-1.5 text-[11px] font-mono text-slate-400">
+                    <div>[SISTEMA]: Inicializando terminal de Cyber Empire v2.5...</div>
+                    <div>[SISTEMA]: Listo para el vicio. Generá ingresos ya.</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NOTIFICACIONES TOAST -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MODAL DE CONFIRMACIÓN DE RESETEO -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-3"></i>
+            <h3 class="text-lg font-bold text-slate-100">¿Reiniciar Partida desde Cero?</h3>
+            <p class="text-xs text-slate-400 mt-2">
+                Esta acción borrará todo tu progreso, empresas, mejoras y Tokens Cyber permanentemente. ¡No hay vuelta atrás!
+            </p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+                    Cancelar
+                </button>
+                <button onclick="confirmReset()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">
+                    Sí, Borrar Todo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÓGICA COMPLETA DEL JUEGO JS -->
+    <script>
+        /* ==========================================================================
+           1. ESTADO Y ESTRUCTURA DE DATOS PRINCIPALES
+           ========================================================================== */
+
+        // Plantilla por defecto del Estado de Guardado
+        const DEFAULT_STATE = {
+            cash: 10,
+            totalCashEarned: 10,
+            clickPower: 1,
+            totalClicks: 0,
+            clickEarnings: 0,
+            cyberTokens: 0,
+            totalPrestiges: 0,
+            eventsSolved: 0,
+            timePlayed: 0,
+            buyMultiplier: 1,
+            lastTick: Date.now(),
+            audioEnabled: true,
+            
+            // Niveles de Generadores / Empresas
+            businesses: {
+                aiBot: { level: 1, manager: false },
+                serverFarm: { level: 0, manager: false },
+                cyberSecurity: { level: 0, manager: false },
+                neuralChip: { level: 0, manager: false },
+                quantumHub: { level: 0, manager: false },
+                metaverseCore: { level: 0, manager: false }
+            },
+
+            // Compras de Mejoras Comunes (IDs comprados)
+            upgrades: {},
+
+            // Compras de Ascension / Perks Permanentes
+            ascension: {}
+        };
+
+        // Clon de trabajo del Estado
+        let game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+        /* ==========================================================================
+           2. DEFINICIÓN DE CONFIGURACIONES (EMPRESAS, MEJORAS, GERENTES)
+           ========================================================================== */
+
+        const BUSINESS_CONFIG = [
+            {
+                id: 'aiBot',
+                name: 'Bot Trading IA',
+                baseCost: 15,
+                baseIncome: 1.5,
+                costMultiplier: 1.15,
+                timeSeconds: 1,
+                icon: 'fa-robot',
+                color: 'from-cyan-500 to-blue-600'
+            },
+            {
+                id: 'serverFarm',
+                name: 'Granja de Servidores',
+                baseCost: 100,
+                baseIncome: 10,
+                costMultiplier: 1.15,
+                timeSeconds: 3,
+                icon: 'fa-server',
+                color: 'from-teal-500 to-emerald-600'
+            },
+            {
+                id: 'cyberSecurity',
+                name: 'Firma Cyber-Seguridad',
+                baseCost: 1100,
+                baseIncome: 80,
+                costMultiplier: 1.14,
+                timeSeconds: 6,
+                icon: 'fa-shield-halved',
+                color: 'from-blue-600 to-indigo-600'
+            },
+            {
+                id: 'neuralChip',
+                name: 'Fab. Microchips Neurales',
+                baseCost: 12000,
+                baseIncome: 470,
+                costMultiplier: 1.13,
+                timeSeconds: 12,
+                icon: 'fa-microchip',
+                color: 'from-purple-600 to-pink-600'
+            },
+            {
+                id: 'quantumHub',
+                name: 'Hub Computación Cuántica',
+                baseCost: 130000,
+                baseIncome: 2600,
+                costMultiplier: 1.12,
+                timeSeconds: 20,
+                icon: 'fa-atom',
+                color: 'from-amber-500 to-red-600'
+            },
+            {
+                id: 'metaverseCore',
+                name: 'Núcleo Simulador Realidad',
+                baseCost: 1400000,
+                baseIncome: 14000,
+                costMultiplier: 1.11,
+                timeSeconds: 40,
+                icon: 'fa-vr-cardboard',
+                color: 'from-fuchsia-600 to-rose-600'
+            }
+        ];
+
+        const UPGRADE_CONFIG = [
+            { id: 'up_click_1', name: 'Teclado Mecánico RGB', cost: 100, target: 'click', mult: 2, desc: 'Duplica las ganancias del clic manual.' },
+            { id: 'up_click_2', name: 'Conexión Fibra Cuántica', cost: 1500, target: 'click', mult: 3, desc: 'Triplica el poder del clic manual.' },
+            { id: 'up_ai_1', name: 'Algoritmo GPT-Neo', cost: 500, target: 'aiBot', mult: 2, desc: 'Duplica las ganancias de Bots de IA.' },
+            { id: 'up_ai_2', name: 'Deep Learning v2', cost: 10000, target: 'aiBot', mult: 3, desc: 'Triplica las ganancias de Bots de IA.' },
+            { id: 'up_serv_1', name: 'Refrigeración Líquida', cost: 2500, target: 'serverFarm', mult: 2, desc: 'Duplica las ganancias de Granja de Servidores.' },
+            { id: 'up_serv_2', name: 'Overclock Masivo', cost: 50000, target: 'serverFarm', mult: 3, desc: 'Triplica el rendimiento de Servidores.' },
+            { id: 'up_cyber_1', name: 'Encriptación Cuántica', cost: 20000, target: 'cyberSecurity', mult: 2, desc: 'Duplica ganancias de Cyber-Seguridad.' },
+            { id: 'up_neural_1', name: 'Litografía de 1nm', cost: 150000, target: 'neuralChip', mult: 2, desc: 'Duplica producción de Microchips.' },
+            { id: 'up_quant_1', name: 'Qubits Entrelazados', cost: 1000000, target: 'quantumHub', mult: 2, desc: 'Duplica ganancias de Hub Cuántico.' }
+        ];
+
+        const MANAGER_CONFIG = [
+            { id: 'mgr_aiBot', busId: 'aiBot', name: 'Sora (IA Lead)', cost: 1000, desc: 'Automatiza el cobro de Bots de IA.' },
+            { id: 'mgr_serverFarm', busId: 'serverFarm', name: 'Alex (SysAdmin)', cost: 5000, desc: 'Automatiza el cobro de Servidores.' },
+            { id: 'mgr_cyberSecurity', busId: 'cyberSecurity', name: 'Viper (WhiteHat)', cost: 25000, desc: 'Automatiza Firma de Seguridad.' },
+            { id: 'mgr_neuralChip', busId: 'neuralChip', name: 'Dr. Aris (Hardware)', cost: 150000, desc: 'Automatiza Fab. Microchips.' },
+            { id: 'mgr_quantumHub', busId: 'quantumHub', name: 'Elena (Física)', cost: 1000000, desc: 'Automatiza Hub Cuántico.' },
+            { id: 'mgr_metaverseCore', busId: 'metaverseCore', name: 'Neo (Architect)', cost: 10000000, desc: 'Automatiza Núcleo Simulador.' }
+        ];
+
+        const ASCENSION_CONFIG = [
+            { id: 'asc_global_1', name: 'Inversores de Capital Riesgo', cost: 1, mult: 1.5, desc: '+50% ingresos globales por nivel.' },
+            { id: 'asc_click_1', name: 'Autoclicker Neural Integrado', cost: 2, mult: 2.0, desc: 'Duplica ganancias de Clics Manuales.' },
+            { id: 'asc_cost_1', name: 'Negociación Corporativa', cost: 5, mult: 0.9, desc: 'Reduce el costo de todos los generadores un 10%.' }
+        ];
+
+        // Estado interno de barras de progreso (timers por empresa)
+        let businessProgress = {
+            aiBot: 0,
+            serverFarm: 0,
+            cyberSecurity: 0,
+            neuralChip: 0,
+            quantumHub: 0,
+            metaverseCore: 0
+        };
+
+        // Estado del evento activo en vivo
+        let currentEvent = null;
+        let eventTimer = null;
+
+        /* ==========================================================================
+           3. FORMATEADOR DE NÚMEROS Y UTILIDADES MATEMÁTICAS (Anti-Overflow)
+           ========================================================================== */
+
+        const NUMBER_SUFFIXES = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Un', 'Du'];
+
+        function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num) || num < 0) return '$0';
+            if (num < 1000) return '$' + num.toFixed(num < 10 ? 1 : 0);
+            
+            const exp = Math.floor(Math.log10(num) / 3);
+            if (exp >= NUMBER_SUFFIXES.length) return '$' + num.toExponential(2);
+            
+            const scaled = num / Math.pow(10, exp * 3);
+            return '$' + scaled.toFixed(2) + ' ' + NUMBER_SUFFIXES[exp];
+        }
+
+        function formatRawNumber(num) {
+            if (num === null || num === undefined || isNaN(num) || num < 0) return '0';
+            if (num < 1000) return Math.floor(num).toString();
+            const exp = Math.floor(Math.log10(num) / 3);
+            if (exp >= NUMBER_SUFFIXES.length) return num.toExponential(2);
+            const scaled = num / Math.pow(10, exp * 3);
+            return scaled.toFixed(2) + ' ' + NUMBER_SUFFIXES[exp];
+        }
+
+        /* ==========================================================================
+           4. SINTETIZADOR DE SONIDO CON WEB AUDIO API
+           ========================================================================== */
+
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!game.audioEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'buy') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(600, now + 0.08);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'collect') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.06); // E5
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'prestige') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) {
+                // Audio no soportado o bloqueado
+            }
+        }
+
+        function toggleAudio() {
+            game.audioEnabled = !game.audioEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (game.audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-cyan-400';
+                showToast('Sonido activado', 'info');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                showToast('Sonido silenciado', 'info');
+            }
+        }
+
+        /* ==========================================================================
+           5. CÁLCULOS DEL JUEGO (Ingresos, Costos, Multiplicadores)
+           ========================================================================== */
+
+        // Multiplicador Global de Prestigio
+        function getPrestigeMultiplier() {
+            const tokenBonus = 1 + (game.cyberTokens * 0.20); // Cada token da +20%
+            let perkBonus = 1;
+            
+            const ascLevel = game.ascension['asc_global_1'] || 0;
+            if (ascLevel > 0) {
+                perkBonus += ascLevel * 0.50;
+            }
+
+            return tokenBonus * perkBonus;
+        }
+
+        // Obtener multiplicador específico por Hito de Nivel (Level Milestones: 25, 50, 100)
+        function getMilestoneMultiplier(level) {
+            let mult = 1;
+            if (level >= 25) mult *= 2;
+            if (level >= 50) mult *= 2;
+            if (level >= 100) mult *= 4;
+            if (level >= 200) mult *= 5;
+            return mult;
+        }
+
+        // Obtener multiplicador de mejoras específicas compradas
+        function getUpgradeMultiplierForBusiness(busId) {
+            let mult = 1;
+            UPGRADE_CONFIG.forEach(up => {
+                if (up.target === busId && game.upgrades[up.id]) {
+                    mult *= up.mult;
+                }
+            });
+            return mult;
+        }
+
+        // Calcular ingreso por ciclo de una empresa
+        function getBusinessIncomePerCycle(busId) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const level = game.businesses[busId].level;
+            if (level <= 0) return 0;
+
+            const base = conf.baseIncome * level;
+            const milestoneMult = getMilestoneMultiplier(level);
+            const upgradeMult = getUpgradeMultiplierForBusiness(busId);
+            const prestigeMult = getPrestigeMultiplier();
+
+            return base * milestoneMult * upgradeMult * prestigeMult;
+        }
+
+        // Calcular ingreso total por segundo (GPS)
+        function getTotalIncomePerSecond() {
+            let total = 0;
+            BUSINESS_CONFIG.forEach(conf => {
+                const busState = game.businesses[conf.id];
+                if (busState.level > 0) {
+                    const cycleIncome = getBusinessIncomePerCycle(conf.id);
+                    const incomePerSec = cycleIncome / conf.timeSeconds;
+                    total += incomePerSec;
+                }
+            });
+            return total;
+        }
+
+        // Costo de compra acumulado para N niveles de un generador
+        function getBusinessCostForLevels(busId, count) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const currentLevel = game.businesses[busId].level;
+            
+            // Reducción de costo por Perk Ascension
+            let costDiscount = 1.0;
+            if (game.ascension['asc_cost_1']) {
+                costDiscount = Math.pow(0.9, game.ascension['asc_cost_1']);
+            }
+
+            let totalCost = 0;
+            for (let i = 0; i < count; i++) {
+                totalCost += conf.baseCost * Math.pow(conf.costMultiplier, currentLevel + i);
+            }
+            return totalCost * costDiscount;
+        }
+
+        // Máximo de niveles comprables con el saldo actual
+        function getMaxBuyableLevels(busId) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const currentLevel = game.businesses[busId].level;
+            let costDiscount = 1.0;
+            if (game.ascension['asc_cost_1']) {
+                costDiscount = Math.pow(0.9, game.ascension['asc_cost_1']);
+            }
+
+            let count = 0;
+            let accumulatedCost = 0;
+            
+            while (count < 1000) { // Límite de seguridad
+                const nextLevelCost = (conf.baseCost * Math.pow(conf.costMultiplier, currentLevel + count)) * costDiscount;
+                if (accumulatedCost + nextLevelCost <= game.cash) {
+                    accumulatedCost += nextLevelCost;
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            return { count: Math.max(1, count), cost: accumulatedCost };
+        }
+
+        // Calcular ganancia de clic manual
+        function getClickPower() {
+            let power = 1;
+            
+            // Mejoras de Clic
+            if (game.upgrades['up_click_1']) power *= 2;
+            if (game.upgrades['up_click_2']) power *= 3;
+
+            // Perk Ascension
+            if (game.ascension['asc_click_1']) power *= Math.pow(2, game.ascension['asc_click_1']);
+
+            // Bonus global de prestigio
+            power *= getPrestigeMultiplier();
+
+            return power;
+        }
+
+        // Calcular cuántos Tokens Cyber otorga un IPO en este momento
+        function calculateClaimableTokens() {
+            if (game.totalCashEarned < 100000) return 0;
+            // Fórmula: floor( 15 * sqrt( totalCashEarned / 1,000,000 ) )
+            const rawTokens = Math.floor(15 * Math.sqrt(game.totalCashEarned / 1000000));
+            return Math.max(0, rawTokens - game.cyberTokens);
+        }
+
+        /* ==========================================================================
+           6. INTERACCIONES DEL JUGADOR (Clics, Compras, Prestigio)
+           ========================================================================== */
+
+        function handleManualClick(event) {
+            const earned = getClickPower();
+            game.cash += earned;
+            game.totalCashEarned += earned;
+            game.totalClicks += 1;
+            game.clickEarnings += earned;
+
+            playSound('click');
+
+            // Texto flotante de animación
+            showFloatingText(event.clientX, event.clientY, `+${formatNumber(earned)}`);
+            updateHeaderStats();
+        }
+
+        function buyBusiness(busId) {
+            let levelsToBuy = game.buyMultiplier;
+            let cost = 0;
+
+            if (levelsToBuy === 'MAX') {
+                const maxInfo = getMaxBuyableLevels(busId);
+                levelsToBuy = maxInfo.count;
+                cost = maxInfo.cost;
+            } else {
+                cost = getBusinessCostForLevels(busId, levelsToBuy);
+            }
+
+            if (game.cash >= cost && cost > 0) {
+                game.cash -= cost;
+                game.businesses[busId].level += levelsToBuy;
+                playSound('buy');
+                addLog(`Comprado +${levelsToBuy} nivel(es) en ${BUSINESS_CONFIG.find(b => b.id === busId).name}.`);
+                renderBusinesses();
+                updateHeaderStats();
+            } else {
+                showToast('Efectivo insuficiente', 'error');
+            }
+        }
+
+        function manualCollect(busId) {
+            const busState = game.businesses[busId];
+            if (busState.level <= 0) return;
+
+            // Si la barra está llena o no tiene automatización
+            if (businessProgress[busId] >= 100) {
+                const earned = getBusinessIncomePerCycle(busId);
+                game.cash += earned;
+                game.totalCashEarned += earned;
+                businessProgress[busId] = 0; // Reiniciar barra
+                playSound('collect');
+                updateHeaderStats();
+            }
+        }
+
+        function buyUpgrade(upgradeId) {
+            const up = UPGRADE_CONFIG.find(u => u.id === upgradeId);
+            if (!up || game.upgrades[upgradeId]) return;
+
+            if (game.cash >= up.cost) {
+                game.cash -= up.cost;
+                game.upgrades[upgradeId] = true;
+                playSound('buy');
+                showToast(`Mejora Adquirida: ${up.name}`, 'success');
+                addLog(`Mejora instalada: ${up.name}`);
+                renderUpgrades();
+                updateHeaderStats();
+            } else {
+                showToast('Efectivo insuficiente para la mejora', 'error');
+            }
+        }
+
+        function buyManager(managerId) {
+            const mgr = MANAGER_CONFIG.find(m => m.id === managerId);
+            if (!mgr || game.businesses[mgr.busId].manager) return;
+
+            if (game.cash >= mgr.cost) {
+                game.cash -= mgr.cost;
+                game.businesses[mgr.busId].manager = true;
+                playSound('buy');
+                showToast(`Gerente Contratado: ${mgr.name}`, 'success');
+                addLog(`Gerente asignado a ${BUSINESS_CONFIG.find(b => b.id === mgr.busId).name}`);
+                renderManagers();
+                renderBusinesses();
+                updateHeaderStats();
+            } else {
+                showToast('Efectivo insuficiente para contratar al gerente', 'error');
+            }
+        }
+
+        function buyAscensionPerk(perkId) {
+            const perk = ASCENSION_CONFIG.find(a => a.id === perkId);
+            if (!perk) return;
+
+            const currentLevel = game.ascension[perkId] || 0;
+            const cost = perk.cost * (currentLevel + 1);
+
+            if (game.cyberTokens >= cost) {
+                game.cyberTokens -= cost;
+                game.ascension[perkId] = currentLevel + 1;
+                playSound('buy');
+                showToast(`Perk Mejorado: ${perk.name}`, 'success');
+                renderAscensionPerks();
+                updateHeaderStats();
+            } else {
+                showToast('Tokens Cyber insuficientes', 'error');
+            }
+        }
+
+        function setBuyMultiplier(mult) {
+            game.buyMultiplier = mult;
+            document.querySelectorAll('.buy-mult-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+            event.target.classList.remove('bg-slate-800', 'text-slate-400');
+            event.target.classList.add('bg-cyan-600', 'text-white');
+            renderBusinesses();
+        }
+
+        function executePrestige() {
+            const tokensToGain = calculateClaimableTokens();
+            if (tokensToGain <= 0) {
+                showToast('Necesitás más capital acumulado para realizar la IPO', 'error');
+                return;
+            }
+
+            // Otorga tokens
+            game.cyberTokens += tokensToGain;
+            game.totalPrestiges += 1;
+
+            // Resetea valores de corrida actual
+            game.cash = 10;
+            game.buyMultiplier = 1;
+
+            // Reset de empresas y gerentes
+            BUSINESS_CONFIG.forEach(b => {
+                game.businesses[b.id] = { level: (b.id === 'aiBot' ? 1 : 0), manager: false };
+                businessProgress[b.id] = 0;
+            });
+
+            // Reset de mejoras no-permanentes
+            game.upgrades = {};
+
+            playSound('prestige');
+            showToast(`¡IPO Exitosa! Reclamaste +${tokensToGain} Tokens Cyber.`, 'success');
+            addLog(`[IPO]: Empresa reorganizada en bolsa. +${tokensToGain} Tokens Cyber.`);
+
+            switchTab('businesses');
+            renderAll();
+        }
+
+        /* ==========================================================================
+           7. BUCLE PRINCIPAL DEL JUEGO (GAME LOOP)
+           ========================================================================== */
+
+        let lastFrameTime = Date.now();
+
+        function gameLoop() {
+            const now = Date.now();
+            const dt = (now - lastFrameTime) / 1000; // Tiempo transcurrido en segundos
+            lastFrameTime = now;
+
+            game.timePlayed += dt;
+
+            // Actualizar empresas / generadores
+            BUSINESS_CONFIG.forEach(conf => {
+                const busId = conf.id;
+                const busState = game.businesses[busId];
+
+                if (busState.level > 0) {
+                    // Si la empresa tiene gerente o la barra se está llenando
+                    if (busState.manager) {
+                        // Modo Automatizado
+                        businessProgress[busId] += (100 / conf.timeSeconds) * dt;
+                        if (businessProgress[busId] >= 100) {
+                            const cycles = Math.floor(businessProgress[busId] / 100);
+                            businessProgress[busId] %= 100;
+                            
+                            const earned = getBusinessIncomePerCycle(busId) * cycles;
+                            game.cash += earned;
+                            game.totalCashEarned += earned;
+                        }
+                    } else {
+                        // Modo Manual: Solo avanza si el usuario activó la barra (o se queda esperando el clic)
+                        if (businessProgress[busId] > 0 && businessProgress[busId] < 100) {
+                            businessProgress[busId] += (100 / conf.timeSeconds) * dt;
+                            if (businessProgress[busId] >= 100) {
+                                businessProgress[busId] = 100; // Lista para cobrar
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Actualizaciones visuales periódicas
+            updateHeaderStats();
+            updateProgressBars();
+            checkLiveEventTrigger();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        /* ==========================================================================
+           8. MANEJO DE OFFLINE PROGRESS & SEGURIDAD ANTI-BUG
+           ========================================================================== */
+
+        function processOfflineProgress() {
+            const now = Date.now();
+            const secondsOffline = Math.min((now - game.lastTick) / 1000, 7200); // Límite máximo 2 horas offline
+            
+            if (secondsOffline > 10) {
+                let totalOfflineEarned = 0;
+
+                BUSINESS_CONFIG.forEach(conf => {
+                    const busState = game.businesses[conf.id];
+                    if (busState.level > 0 && busState.manager) {
+                        const incomePerSec = getBusinessIncomePerCycle(conf.id) / conf.timeSeconds;
+                        totalOfflineEarned += incomePerSec * secondsOffline;
+                    }
+                });
+
+                if (totalOfflineEarned > 0) {
+                    game.cash += totalOfflineEarned;
+                    game.totalCashEarned += totalOfflineEarned;
+                    showToast(`¡Bienvenido de nuevo! Tus gerentes produjeron ${formatNumber(totalOfflineEarned)} mientras estabas offline.`, 'success');
+                    addLog(`[OFFLINE]: Ganancias pasivas recuperadas: ${formatNumber(totalOfflineEarned)}.`);
+                }
+            }
+            game.lastTick = now;
+        }
+
+        /* ==========================================================================
+           9. SISTEMA DE EVENTOS ALEATORIOS EN VIVO (Hacks, Tendencias)
+           ========================================================================== */
+
+        function checkLiveEventTrigger() {
+            if (currentEvent) return; // Ya hay evento activo
+
+            // 1% de probabilidad cada tick si han pasado más de 40s
+            if (Math.random() < 0.001) {
+                triggerRandomEvent();
+            }
+        }
+
+        function triggerRandomEvent() {
+            const eventTypes = [
+                {
+                    title: 'TENDENCIA VIRAL',
+                    name: 'Boost de Clientes en Redes',
+                    desc: '¡Tus servicios se hicieron virales! Reclamá una inyección de capital instantánea.',
+                    icon: 'fa-fire text-amber-400',
+                    action: 'Reclamar Bonificación',
+                    type: 'cash'
+                },
+                {
+                    title: 'CYBER-ATAQUE DETECTADO',
+                    name: 'Ataque DDoS a Servidores',
+                    desc: 'Defendé la red de la corporación para recibir una recompensa de los seguros.',
+                    icon: 'fa-shield-cat text-red-400',
+                    action: 'Activar Firewall',
+                    type: 'cash'
+                }
+            ];
+
+            currentEvent = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+
+            document.getElementById('event-title').innerText = currentEvent.title;
+            document.getElementById('event-name').innerText = currentEvent.name;
+            document.getElementById('event-desc').innerText = currentEvent.desc;
+            document.getElementById('event-action-btn').innerText = currentEvent.action;
+            document.getElementById('event-icon').className = `fa-solid ${currentEvent.icon}`;
+            document.getElementById('live-event-card').classList.remove('hidden');
+
+            playSound('collect');
+
+            // Expira en 15 segundos
+            eventTimer = setTimeout(() => {
+                dismissLiveEvent();
+            }, 15000);
+        }
+
+        function resolveLiveEvent() {
+            if (!currentEvent) return;
+
+            clearTimeout(eventTimer);
+
+            // Recompensa: 30 segundos de producción total
+            const reward = Math.max(100, getTotalIncomePerSecond() * 30);
+            game.cash += reward;
+            game.totalCashEarned += reward;
+            game.eventsSolved += 1;
+
+            playSound('buy');
+            showToast(`¡Evento resuelto! Ganaste ${formatNumber(reward)}`, 'success');
+            addLog(`[EVENTO]: Oportunidad aprovechada (+${formatNumber(reward)}).`);
+
+            dismissLiveEvent();
+        }
+
+        function dismissLiveEvent() {
+            currentEvent = null;
+            document.getElementById('live-event-card').classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           10. INTERFAZ DE USUARIO & RENDERIZADO
+           ========================================================================== */
+
+        function updateHeaderStats() {
+            document.getElementById('stat-cash').innerText = formatNumber(game.cash);
+            document.getElementById('stat-income').innerText = formatNumber(getTotalIncomePerSecond()) + '/s';
+            document.getElementById('stat-tokens').innerHTML = `<i class="fa-solid fa-coins text-xs"></i> ${formatRawNumber(game.cyberTokens)}`;
+            document.getElementById('click-power-text').innerText = `+${formatNumber(getClickPower())}`;
+
+            // Stats tab update
+            document.getElementById('stat-total-cash').innerText = formatNumber(game.totalCashEarned);
+            document.getElementById('stat-total-clicks').innerText = formatRawNumber(game.totalClicks);
+            document.getElementById('stat-click-earnings').innerText = formatNumber(game.clickEarnings);
+            document.getElementById('stat-prestige-count').innerText = game.totalPrestiges;
+            document.getElementById('stat-events-solved').innerText = game.eventsSolved;
+            document.getElementById('stat-time-played').innerText = `${Math.floor(game.timePlayed / 60)}m ${Math.floor(game.timePlayed % 60)}s`;
+
+            // Prestige UI Update
+            const claimable = calculateClaimableTokens();
+            document.getElementById('prestige-claimable').innerText = `+${formatRawNumber(claimable)} Tokens`;
+            document.getElementById('prestige-current-bonus').innerText = `Multiplicador global actual: x${getPrestigeMultiplier().toFixed(2)}`;
+            document.getElementById('btn-do-prestige').disabled = (claimable <= 0);
+        }
+
+        function renderBusinesses() {
+            const container = document.getElementById('businesses-list');
+            container.innerHTML = '';
+
+            BUSINESS_CONFIG.forEach(conf => {
+                const busState = game.businesses[conf.id];
+                const cycleIncome = getBusinessIncomePerCycle(conf.id);
+                
+                let buyCount = game.buyMultiplier;
+                let cost = 0;
+
+                if (buyCount === 'MAX') {
+                    const maxInfo = getMaxBuyableLevels(conf.id);
+                    buyCount = maxInfo.count;
+                    cost = maxInfo.cost;
+                } else {
+                    cost = getBusinessCostForLevels(conf.id, buyCount);
+                }
+
+                const canAfford = (game.cash >= cost && cost > 0);
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-950/80 rounded-xl border p-3.5 transition-all flex flex-col sm:flex-row items-center justify-between gap-3 ${busState.level > 0 ? 'border-slate-800' : 'border-slate-900 opacity-75'}`;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${conf.color} flex items-center justify-center text-white text-xl shadow-lg shrink-0">
+                            <i class="fa-solid ${conf.icon}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-sm text-slate-100 truncate">${conf.name}</h4>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 font-bold">Lvl ${busState.level}</span>
+                            </div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">
+                                Producción: <span class="text-emerald-400 font-semibold">${formatNumber(cycleIncome)}</span> / ${conf.timeSeconds}s
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <!-- Barra de progreso / Botón manual -->
+                        <div class="flex-1 sm:w-36">
+                            <button onclick="manualCollect('${conf.id}')" ${busState.level === 0 || busState.manager ? 'disabled' : ''} class="w-full h-9 rounded-lg bg-slate-900 border border-slate-800 overflow-hidden relative group transition-all">
+                                <div id="pbar-${conf.id}" class="h-full bg-gradient-to-r from-cyan-600 to-teal-500 transition-all duration-75" style="width: 0%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-[10px] font-mono font-bold text-slate-200">
+                                    ${busState.manager ? '<i class="fa-solid fa-robot mr-1 text-cyan-400"></i> Auto' : 'Cobrar'}
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- Botón Comprar Nivel -->
+                        <button onclick="buyBusiness('${conf.id}')" class="px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all flex flex-col items-center justify-center min-w-[100px] ${canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                            <span>+${buyCount} Lvl</span>
+                            <span class="text-[10px] font-normal opacity-90">${formatNumber(cost)}</span>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function updateProgressBars() {
+            BUSINESS_CONFIG.forEach(conf => {
+                const bar = document.getElementById(`pbar-${conf.id}`);
+                if (bar) {
+                    bar.style.width = `${businessProgress[conf.id]}%`;
+                }
+            });
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-list');
+            container.innerHTML = '';
+
+            UPGRADE_CONFIG.forEach(up => {
+                const bought = game.upgrades[up.id];
+                const canAfford = game.cash >= up.cost;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between gap-3 ${bought ? 'bg-slate-950/40 border-emerald-900/40 opacity-60' : 'bg-slate-950/80 border-slate-800'}`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-slate-200">${up.name}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${up.desc}</div>
+                        <div class="text-[10px] font-mono text-emerald-400 mt-1 font-bold">${formatNumber(up.cost)}</div>
+                    </div>
+                    <button onclick="buyUpgrade('${up.id}')" ${bought || !canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${bought ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-md' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        ${bought ? 'Comprado' : 'Comprar'}
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderManagers() {
+            const container = document.getElementById('managers-list');
+            container.innerHTML = '';
+
+            MANAGER_CONFIG.forEach(mgr => {
+                const bought = game.businesses[mgr.busId].manager;
+                const canAfford = game.cash >= mgr.cost;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between gap-3 ${bought ? 'bg-slate-950/40 border-emerald-900/40 opacity-60' : 'bg-slate-950/80 border-slate-800'}`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-tie text-cyan-400"></i> ${mgr.name}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${mgr.desc}</div>
+                        <div class="text-[10px] font-mono text-emerald-400 mt-1 font-bold">${formatNumber(mgr.cost)}</div>
+                    </div>
+                    <button onclick="buyManager('${mgr.id}')" ${bought || !canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${bought ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-md' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        ${bought ? 'Contratado' : 'Contratar'}
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAscensionPerks() {
+            const container = document.getElementById('ascension-upgrades-list');
+            container.innerHTML = '';
+
+            ASCENSION_CONFIG.forEach(perk => {
+                const currentLevel = game.ascension[perk.id] || 0;
+                const cost = perk.cost * (currentLevel + 1);
+                const canAfford = game.cyberTokens >= cost;
+
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-xl border border-purple-900/50 bg-slate-950/80 flex items-center justify-between gap-3';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                            ${perk.name} <span class="text-[10px] px-1.5 py-0.2 rounded bg-purple-950 border border-purple-800 font-mono">Lvl ${currentLevel}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${perk.desc}</div>
+                        <div class="text-[10px] font-mono text-purple-400 mt-1 font-bold">${cost} Tokens Cyber</div>
+                    </div>
+                    <button onclick="buyAscensionPerk('${perk.id}')" ${!canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${canAfford ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/30' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        Mejorar
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAll() {
+            renderBusinesses();
+            renderUpgrades();
+            renderManagers();
+            renderAscensionPerks();
+            updateHeaderStats();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-500/30');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            activeBtn.classList.add('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-500/30');
+
+            // Renderizar contenido actualizado al cambiar de pestaña
+            if (tabId === 'businesses') renderBusinesses();
+            if (tabId === 'upgrades') renderUpgrades();
+            if (tabId === 'managers') renderManagers();
+            if (tabId === 'prestige') renderAscensionPerks();
+        }
+
+        /* ==========================================================================
+           11. NOTIFICACIONES, EFECTOS VISUALES Y LOGS
+           ========================================================================== */
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const colors = {
+                success: 'bg-emerald-950 border-emerald-800 text-emerald-300',
+                error: 'bg-red-950 border-red-800 text-red-300',
+                info: 'bg-slate-900 border-slate-800 text-cyan-300'
+            };
+
+            toast.className = `px-4 py-2.5 rounded-xl border text-xs font-medium shadow-xl backdrop-blur-md transition-all transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2 ${colors[type]}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showFloatingText(x, y, text) {
+            const el = document.createElement('div');
+            el.className = 'float-text text-cyan-400 font-mono text-sm';
+            el.innerText = text;
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 20}px`;
+            document.body.appendChild(el);
+
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        function addLog(text) {
+            const container = document.getElementById('activity-log');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const logEntry = document.createElement('div');
+            logEntry.innerText = `[${time}] ${text}`;
+            container.prepend(logEntry);
+
+            // Limitar a los últimos 30 logs
+            if (container.children.length > 30) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        /* ==========================================================================
+           12. AUTOGUARDADO & MODAL DE CONFIGURACIÓN
+           ========================================================================== */
+
+        const SAVE_KEY = 'CyberEmpireTycoon_SaveData_v2';
+
+        function saveGame() {
+            try {
+                game.lastTick = Date.now();
+                localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+            } catch (e) {
+                console.error('Error al guardar partida:', e);
+            }
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem(SAVE_KEY);
+                if (saved) {
+                    const loaded = JSON.parse(saved);
+                    // Merge seguro para evitar fallos por campos nuevos
+                    game = { ...DEFAULT_STATE, ...loaded };
+                    
+                    // Asegurar que las subestructuras existan
+                    game.businesses = { ...DEFAULT_STATE.businesses, ...(loaded.businesses || {}) };
+                    game.upgrades = { ...DEFAULT_STATE.upgrades, ...(loaded.upgrades || {}) };
+                    game.ascension = { ...DEFAULT_STATE.ascension, ...(loaded.ascension || {}) };
+                }
+            } catch (e) {
+                console.error('Error al cargar partida:', e);
+                game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+        }
+
+        function manualSave() {
+            saveGame();
+            showToast('Partida guardada exitosamente', 'success');
+        }
+
+        function openResetModal() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        function confirmReset() {
+            localStorage.removeItem(SAVE_KEY);
+            game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            closeResetModal();
+            renderAll();
+            showToast('Partida reiniciada desde cero', 'info');
+            addLog('[SISTEMA]: Reinicio total efectuado.');
+        }
+
+        // Auto-guardado cada 15 segundos
+        setInterval(saveGame, 15000);
+
+        /* ==========================================================================
+           13. INICIALIZACIÓN AL CÁRGAR LA PÁGINA
+           ========================================================================== */
+
+        window.onload = function() {
+            loadGame();
+            processOfflineProgress();
+            renderAll();
+            
+            // Iniciar Bucle del Juego
+            lastFrameTime = Date.now();
+            requestAnimationFrame(gameLoop);
+
+            addLog('[SISTEMA]: Sesión iniciada con éxito. Imperio operativo.');
+        };
+    </script>
+</body>
+</html>
+```
