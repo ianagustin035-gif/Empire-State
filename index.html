@@ -1,0 +1,1359 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100 select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech & Cyber Empire Tycoon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#050814',
+                            card: '#0b1120',
+                            border: '#1e293b',
+                            neonCyan: '#06b6d4',
+                            neonGreen: '#10b981',
+                            neonPurple: '#8b5cf6',
+                            neonPink: '#ec4899',
+                            neonAmber: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Animaciones y Efectos Cyberpunk */
+        @keyframes floatText {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-45px) scale(1.1); }
+        }
+        .float-text {
+            position: absolute;
+            pointer-events: none;
+            animation: floatText 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            font-weight: 800;
+            z-index: 60;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3), inset 0 0 15px rgba(6, 182, 212, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.7), inset 0 0 20px rgba(6, 182, 212, 0.3); }
+        }
+        .glow-cyan { animation: pulseGlow 3s infinite; }
+
+        @keyframes sparkParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+        }
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkParticle 0.5s ease-out forwards;
+            z-index: 70;
+        }
+
+        /* Scrollbars oscuras personalizadas */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050814; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans overflow-hidden bg-[#050814] text-slate-200">
+
+    <!-- HEADER DE CONTROL GENERAL -->
+    <header class="bg-slate-900/90 border-b border-slate-800/80 p-3 sm:p-4 backdrop-blur-md sticky top-0 z-30 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Título del Juego -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 uppercase">
+                        CYBER EMPIRE <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-mono font-bold">PRO v3.5</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
+                        <i class="fa-solid fa-server text-cyan-400"></i> Corporate Cyber Core
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dashboard de Indicadores Económicos -->
+            <div class="flex items-center gap-3 sm:gap-6 bg-slate-950/90 px-4 py-2 rounded-xl border border-slate-800 shadow-inner">
+                <!-- Efectivo / Capital -->
+                <div class="text-right">
+                    <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400">Capital Disponible</div>
+                    <div class="text-base sm:text-2xl font-black text-emerald-400 font-mono tracking-tight" id="stat-cash">$10</div>
+                </div>
+                
+                <div class="h-8 w-px bg-slate-800"></div>
+
+                <!-- Ganancias por segundo -->
+                <div class="text-right">
+                    <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400">Rendimiento / seg</div>
+                    <div class="text-xs sm:text-base font-bold text-cyan-400 font-mono" id="stat-income">$0/s</div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-800"></div>
+
+                <!-- Overclock Activo -->
+                <div class="text-right">
+                    <div class="text-[9px] uppercase font-mono tracking-wider text-amber-400">Overclock</div>
+                    <div class="text-xs sm:text-base font-bold text-amber-300 font-mono" id="stat-overclock">x1.0</div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-800"></div>
+
+                <!-- Prestigio / Tokens Cyber -->
+                <div class="text-right">
+                    <div class="text-[9px] uppercase font-mono tracking-wider text-slate-400">Tokens Cyber</div>
+                    <div class="text-xs sm:text-base font-bold text-purple-400 font-mono flex items-center justify-end gap-1" id="stat-tokens">
+                        <i class="fa-solid fa-coins text-xs"></i> 0
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción Global -->
+            <div class="flex items-center gap-2">
+                <button id="btn-audio" onclick="toggleAudio()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 transition-all border border-slate-700/60 shadow" title="Audio On/Off">
+                    <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+                </button>
+                <button onclick="manualSave()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700/60 shadow" title="Guardar Partida">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </button>
+                <button onclick="openResetModal()" class="p-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 transition-all border border-red-800/40 shadow" title="Reiniciar Partida">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL DE NAVEGACIÓN Y JUEGO -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-4 p-3 sm:p-4 overflow-hidden">
+
+        <!-- PANEL IZQUIERDO: TABS Y MÓDULOS DE COMPRA -->
+        <div class="flex-1 flex flex-col min-h-0 bg-slate-900/40 rounded-2xl border border-slate-800/80 backdrop-blur-sm overflow-hidden shadow-2xl">
+            
+            <!-- SELECTOR DE PESTAÑAS (TABS) -->
+            <div class="flex border-b border-slate-800/80 bg-slate-950/80 p-1.5 gap-1 overflow-x-auto">
+                <button onclick="switchTab('businesses')" id="tab-btn-businesses" class="tab-btn active flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30">
+                    <i class="fa-solid fa-server"></i> Empresas
+                </button>
+                <button onclick="switchTab('market')" id="tab-btn-market" class="tab-btn flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-chart-line text-emerald-400"></i> Trading
+                </button>
+                <button onclick="switchTab('upgrades')" id="tab-btn-upgrades" class="tab-btn flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-microchip text-indigo-400"></i> Mejoras I+D
+                </button>
+                <button onclick="switchTab('managers')" id="tab-btn-managers" class="tab-btn flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-user-gear text-teal-400"></i> Gerentes
+                </button>
+                <button onclick="switchTab('achievements')" id="tab-btn-achievements" class="tab-btn flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-400 hover:bg-slate-800/50 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> Logros
+                </button>
+                <button onclick="switchTab('prestige')" id="tab-btn-prestige" class="tab-btn flex-1 min-w-[100px] py-2 px-3 rounded-xl font-bold text-xs sm:text-sm text-purple-400 hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-rocket"></i> Prestigio IPO
+                </button>
+            </div>
+
+            <!-- VISTAS CONTENIDO DE CADA TAB -->
+            <div class="flex-1 p-3 sm:p-4 overflow-y-auto relative" id="tab-container">
+
+                <!-- 1. VISTA UNIDADES DE NEGOCIO -->
+                <div id="tab-businesses" class="tab-content space-y-3">
+                    <!-- Selector de Lote de Compra (x1, x10, x100, xMAX) -->
+                    <div class="flex items-center justify-between bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-xs mb-3">
+                        <span class="text-slate-400 font-mono font-medium">Modo de Compra de Niveles:</span>
+                        <div class="flex gap-1" id="buy-multiplier-container">
+                            <button onclick="setBuyMultiplier(1)" class="buy-mult-btn active px-3 py-1 rounded-lg bg-cyan-600 text-white font-bold transition-all shadow">x1</button>
+                            <button onclick="setBuyMultiplier(10)" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">x10</button>
+                            <button onclick="setBuyMultiplier(100)" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">x100</button>
+                            <button onclick="setBuyMultiplier('MAX')" class="buy-mult-btn px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">MAX</button>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor Dinámico de las 8 Empresas Cyber -->
+                    <div id="businesses-list" class="space-y-3"></div>
+                </div>
+
+                <!-- 2. VISTA MERCADO CRYPTO TRADING -->
+                <div id="tab-market" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line"></i> Exchange de Criptomonedas Virtuales
+                                </h3>
+                                <p class="text-xs text-slate-400">Fluctuación de precios en tiempo real. Comprá barato, vendé alto.</p>
+                            </div>
+                            <span class="text-[10px] uppercase font-mono px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">Mercado En Vivo</span>
+                        </div>
+
+                        <!-- Gráfico Canvas Simplificado -->
+                        <div class="w-full h-36 bg-slate-900/90 rounded-xl border border-slate-800 p-2 relative">
+                            <canvas id="market-chart" class="w-full h-full"></canvas>
+                        </div>
+
+                        <!-- Tarjetas de Activos Crypto -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4" id="crypto-assets-list"></div>
+                    </div>
+                </div>
+
+                <!-- 3. VISTA MEJORAS I+D -->
+                <div id="tab-upgrades" class="tab-content hidden space-y-3">
+                    <p class="text-xs text-slate-400 mb-2">Instalá actualizaciones de código, algoritmos y hardware para multiplicar exponencialmente las ganancias.</p>
+                    <div id="upgrades-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- 4. VISTA GERENTES AUTOMATIZADORES -->
+                <div id="tab-managers" class="tab-content hidden space-y-3">
+                    <p class="text-xs text-slate-400 mb-2">Contratá IAs y SysAdmins ejecutivos para automatizar completamente el cobro de tus operaciones.</p>
+                    <div id="managers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- 5. VISTA LOGROS -->
+                <div id="tab-achievements" class="tab-content hidden space-y-3">
+                    <p class="text-xs text-slate-400 mb-2">Completá los objetivos de desarrollo corporativo para desbloquear multiplicadores permanentes.</p>
+                    <div id="achievements-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- 6. VISTA PRESTIGIO / IPO -->
+                <div id="tab-prestige" class="tab-content hidden space-y-4">
+                    <div class="bg-gradient-to-r from-purple-950/60 via-slate-900 to-indigo-950/60 border border-purple-800/50 rounded-2xl p-5 text-center shadow-2xl">
+                        <i class="fa-solid fa-building-columns text-4xl text-purple-400 mb-2"></i>
+                        <h2 class="text-xl font-black text-purple-300 uppercase tracking-wider">Oferta Pública Inicial (IPO)</h2>
+                        <p class="text-xs text-slate-300 mt-2 max-w-lg mx-auto">
+                            Reorganizá tu corporación para salir a la bolsa global. Perderás tus empresas, nivel y efectivo actual, pero ganarás <span class="text-purple-300 font-bold">Tokens Cyber</span> que potencian masivamente las ganancias para siempre.
+                        </p>
+                        
+                        <div class="mt-4 p-4 bg-slate-950/90 rounded-xl border border-purple-900/60 inline-block shadow-inner">
+                            <div class="text-xs text-slate-400 font-mono">Tokens a Reclamar Ahora:</div>
+                            <div id="prestige-claimable" class="text-3xl font-black text-purple-400 font-mono my-1">+0 Tokens</div>
+                            <div class="text-[11px] text-purple-300/80 font-mono" id="prestige-current-bonus">Bonus de Ganancia Global: x1.00</div>
+                        </div>
+
+                        <div class="mt-5">
+                            <button id="btn-do-prestige" onclick="executePrestige()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-purple-600/30 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                                REALIZAR SALIDA A BOLSA (IPO)
+                            </button>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xs font-bold uppercase font-mono text-purple-400 mt-6 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-atom"></i> Perks Cyberneticos de Prestigio
+                    </h3>
+                    <div id="ascension-upgrades-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO: CLICKER CENTRAL, MINI-JUEGO DE HACKEO Y LOGS -->
+        <div class="w-full md:w-80 lg:w-96 flex flex-col gap-4">
+            
+            <!-- MINADO MANUAL CLICKER CENTRAL -->
+            <div class="bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl">
+                <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+                
+                <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest font-bold mb-1">Terminal de Control Central</span>
+                <h3 class="text-xs font-bold text-slate-300 mb-2">Minado Manual de Datos</h3>
+
+                <!-- BOTÓN PRINCIPAL DE CLIC MANUAL -->
+                <button id="main-click-btn" onclick="handleManualClick(event)" class="relative group w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-slate-900 border-4 border-cyan-500/40 hover:border-cyan-400 flex flex-col items-center justify-center shadow-2xl transition-all transform active:scale-90 hover:scale-105 cursor-pointer glow-cyan my-2">
+                    <div class="absolute inset-0 rounded-full bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-all"></div>
+                    <i class="fa-solid fa-terminal text-4xl sm:text-5xl text-cyan-400 mb-1 group-hover:text-cyan-300 transition-colors"></i>
+                    <span class="text-[10px] font-mono text-cyan-300/80 uppercase font-bold tracking-wider">EJECUTAR</span>
+                    <span class="text-xs font-black text-emerald-400 font-mono mt-0.5" id="click-power-text">+$1</span>
+                </button>
+
+                <p class="text-[11px] text-slate-400">Hacé clic para generar capital e impulsos directos.</p>
+            </div>
+
+            <!-- MINI-JUEGO DE CYBER-HACK / OVERCLOCK ACTIVO -->
+            <div class="bg-slate-900/90 rounded-2xl border border-amber-500/30 p-3.5 relative overflow-hidden shadow-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> Overclock (Mini-Juego de Hackeo)
+                    </span>
+                    <span id="hack-status-badge" class="text-[10px] font-mono font-bold text-slate-400">Sincronizado</span>
+                </div>
+
+                <p class="text-[11px] text-slate-300 mb-3" id="hack-instructions">
+                    Presioná el botón cuando la aguja esté en la <span class="text-emerald-400 font-bold">Zona Neón</span> para lograr **Overclock x5 (30s)**.
+                </p>
+
+                <!-- BARRA DE PRECISIÓN DEL MINI-JUEGO -->
+                <div class="w-full h-6 bg-slate-950 rounded-lg border border-slate-800 relative overflow-hidden mb-3">
+                    <div id="hack-target-zone" class="absolute top-0 bottom-0 bg-emerald-500/40 border-x-2 border-emerald-400" style="left: 40%; width: 20%;"></div>
+                    <div id="hack-needle" class="absolute top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_#06b6d4]" style="left: 0%;"></div>
+                </div>
+
+                <button id="btn-trigger-hack" onclick="executeHackAttempt()" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bug"></i> EJECUTAR PRECISIÓN HACK
+                </button>
+            </div>
+
+            <!-- FEED DE EVENTOS DE SISTEMA -->
+            <div class="flex-1 bg-slate-900/40 rounded-2xl border border-slate-800/80 p-3 flex flex-col min-h-[130px]">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+                    <span>Logs de Servidor</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                </div>
+                <div id="activity-log" class="flex-1 overflow-y-auto space-y-1 text-[11px] font-mono text-slate-400">
+                    <div>[SISTEMA]: Conectado a la Red Cyber Empire v3.5 PRO.</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NOTIFICACIONES TOAST EN PANTALLA -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MODAL CONFIRMACIÓN DE RESETEO -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-3"></i>
+            <h3 class="text-lg font-bold text-slate-100">¿Reiniciar Todo el Progreso?</h3>
+            <p class="text-xs text-slate-400 mt-2">
+                Esta acción borrará completamente tus empresas, mejoras, cartera de Crypto y Tokens Cyber.
+            </p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+                    Cancelar
+                </button>
+                <button onclick="confirmReset()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">
+                    Sí, Borrar Todo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CÓDIGO JS PRINCIPAL COMPLETAMENTE FUNCIONAL -->
+    <script>
+        /* ==========================================================================
+           1. ESTADO Y CONFIGURACIONES
+           ========================================================================== */
+
+        const DEFAULT_STATE = {
+            cash: 10,
+            totalCashEarned: 10,
+            totalClicks: 0,
+            clickEarnings: 0,
+            cyberTokens: 0,
+            totalPrestiges: 0,
+            totalHacks: 0,
+            cryptoProfit: 0,
+            timePlayed: 0,
+            buyMultiplier: 1,
+            audioEnabled: true,
+            
+            // 8 UNIDADES OBLIGATORIAS
+            businesses: {
+                cryptoRig: { level: 1, manager: false },
+                aiServer: { level: 0, manager: false },
+                neuralNet: { level: 0, manager: false },
+                quantumComputer: { level: 0, manager: false },
+                cyberSatellite: { level: 0, manager: false },
+                globalBotnet: { level: 0, manager: false },
+                neuralInterface: { level: 0, manager: false },
+                matrixSimulation: { level: 0, manager: false }
+            },
+
+            upgrades: {},
+            ascension: {},
+            achievements: {},
+
+            portfolio: {
+                CYBER: { amount: 0, buyPrice: 0 },
+                NEO: { amount: 0, buyPrice: 0 }
+            }
+        };
+
+        let game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+        // LAS 8 UNIDADES OBLIGATORIAS
+        const BUSINESS_CONFIG = [
+            { id: 'cryptoRig', name: '1. Minería Crypto', baseCost: 15, baseIncome: 1.5, costMultiplier: 1.15, timeSeconds: 1, icon: 'fa-cubes', color: 'from-amber-500 to-yellow-600' },
+            { id: 'aiServer', name: '2. Servidores AI', baseCost: 100, baseIncome: 10, costMultiplier: 1.15, timeSeconds: 3, icon: 'fa-brain', color: 'from-blue-500 to-cyan-600' },
+            { id: 'neuralNet', name: '3. Red Neuronal', baseCost: 1100, baseIncome: 80, costMultiplier: 1.14, timeSeconds: 6, icon: 'fa-diagram-project', color: 'from-pink-500 to-rose-600' },
+            { id: 'quantumComputer', name: '4. Computadora Cuántica', baseCost: 12000, baseIncome: 470, costMultiplier: 1.13, timeSeconds: 10, icon: 'fa-atom', color: 'from-purple-600 to-indigo-600' },
+            { id: 'cyberSatellite', name: '5. Red Satelital Cyber', baseCost: 130000, baseIncome: 2600, costMultiplier: 1.12, timeSeconds: 16, icon: 'fa-satellite', color: 'from-teal-500 to-emerald-600' },
+            { id: 'globalBotnet', name: '6. Botnet Global', baseCost: 1400000, baseIncome: 14000, costMultiplier: 1.11, timeSeconds: 25, icon: 'fa-robot', color: 'from-red-600 to-orange-600' },
+            { id: 'neuralInterface', name: '7. Interfaz Neural Directa', baseCost: 20000000, baseIncome: 95000, costMultiplier: 1.10, timeSeconds: 40, icon: 'fa-headset', color: 'from-cyan-600 to-sky-400' },
+            { id: 'matrixSimulation', name: '8. Simulación Matrix', baseCost: 350000000, baseIncome: 650000, costMultiplier: 1.09, timeSeconds: 60, icon: 'fa-vr-cardboard', color: 'from-emerald-600 to-green-800' }
+        ];
+
+        const UPGRADE_CONFIG = [
+            { id: 'up_click_1', name: 'Teclado RGB Cuántico', cost: 100, target: 'click', mult: 2, desc: 'Duplica las ganancias del clic manual.' },
+            { id: 'up_click_2', name: 'Enlace Neural Directo', cost: 5000, target: 'click', mult: 3, desc: 'Triplica el poder del clic manual.' },
+            { id: 'up_rig_1', name: 'ASIC de Nanotubos', cost: 500, target: 'cryptoRig', mult: 2, desc: 'Duplica rentabilidad de Minería Crypto.' },
+            { id: 'up_ai_1', name: 'Modelos LLM Autónomos', cost: 2500, target: 'aiServer', mult: 2, desc: 'Duplica ganancias de Servidores AI.' },
+            { id: 'up_neural_1', name: 'Sinapsis Artificiales', cost: 20000, target: 'neuralNet', mult: 2, desc: 'Duplica rendimiento de Red Neuronal.' },
+            { id: 'up_quant_1', name: 'Qubits Superconductores', cost: 150000, target: 'quantumComputer', mult: 2, desc: 'Duplica ganancias Cuánticas.' },
+            { id: 'up_sat_1', name: 'Láser Interorbital', cost: 1000000, target: 'cyberSatellite', mult: 2, desc: 'Duplica rendimiento Satelital.' },
+            { id: 'up_bot_1', name: 'Infección Zero-Day', cost: 15000000, target: 'globalBotnet', mult: 2, desc: 'Duplica rendimiento Botnet.' },
+            { id: 'up_head_1', name: 'Cables de Fibra Óptica Cortex', cost: 200000000, target: 'neuralInterface', mult: 2, desc: 'Duplica la Interfaz Neural.' },
+            { id: 'up_matrix_1', name: 'Motor de Realidad Sintética', cost: 3000000000, target: 'matrixSimulation', mult: 2, desc: 'Duplica la Simulación Matrix.' }
+        ];
+
+        const MANAGER_CONFIG = [
+            { id: 'mgr_cryptoRig', busId: 'cryptoRig', name: 'Satoshi Nakamoto', cost: 1000, desc: 'Automatiza la Minería Crypto.' },
+            { id: 'mgr_aiServer', busId: 'aiServer', name: 'Sam Altman AI', cost: 5000, desc: 'Automatiza Servidores AI.' },
+            { id: 'mgr_neuralNet', busId: 'neuralNet', name: 'Demis Hassabis', cost: 25000, desc: 'Automatiza Red Neuronal.' },
+            { id: 'mgr_quantumComputer', busId: 'quantumComputer', name: 'Michio Kaku', cost: 150000, desc: 'Automatiza Computación Cuántica.' },
+            { id: 'mgr_cyberSatellite', busId: 'cyberSatellite', name: 'Elon Musk Bot', cost: 1000000, desc: 'Automatiza Red Satelital.' },
+            { id: 'mgr_globalBotnet', busId: 'globalBotnet', name: 'Kevin Mitnick', cost: 10000000, desc: 'Automatiza Botnet Global.' },
+            { id: 'mgr_neuralInterface', busId: 'neuralInterface', name: 'Cyber Doctor', cost: 150000000, desc: 'Automatiza Interfaz Neural.' },
+            { id: 'mgr_matrixSimulation', busId: 'matrixSimulation', name: 'Agente Smith', cost: 2000000000, desc: 'Automatiza Simulación Matrix.' }
+        ];
+
+        const ASCENSION_CONFIG = [
+            { id: 'asc_global_1', name: 'Capital de Riesgo Galáctico', cost: 1, desc: '+50% ingresos globales por nivel.' },
+            { id: 'asc_click_1', name: 'Autoclicker Neural', cost: 2, desc: 'Duplica ganancias de Clics Manuales.' },
+            { id: 'asc_cost_1', name: 'Subsidio Corporativo', cost: 5, desc: 'Reduce el costo de edificios un 10% por nivel.' }
+        ];
+
+        const ACHIEVEMENTS_CONFIG = [
+            { id: 'ach_1', name: 'Primer Clic', desc: 'Realizá 10 clics manuales.', check: () => game.totalClicks >= 10, bonusText: '+5% Ganancias Glob.' },
+            { id: 'ach_2', name: 'Capital Inicial', desc: 'Generá $1,000 acumulados.', check: () => game.totalCashEarned >= 1000, bonusText: '+5% Ganancias Glob.' },
+            { id: 'ach_3', name: 'Millonario Cyber', desc: 'Alcanzá $1,000,000 histórico.', check: () => game.totalCashEarned >= 1000000, bonusText: '+10% Ganancias Glob.' },
+            { id: 'ach_4', name: 'Trillonario Tech', desc: 'Alcanzá $1,000,000,000,000 acumulado.', check: () => game.totalCashEarned >= 1e12, bonusText: '+20% Ganancias Glob.' },
+            { id: 'ach_5', name: 'Hackerman', desc: 'Realizá 5 Overclocks de Hackeo exitosos.', check: () => game.totalHacks >= 5, bonusText: '+10% Clics' },
+            { id: 'ach_6', name: 'Lobo de Wall Street', desc: 'Ganás $100,000 operando Crypto.', check: () => game.cryptoProfit >= 100000, bonusText: '+10% Ganancias Glob.' },
+            { id: 'ach_7', name: 'Dominación Matrix', desc: 'Comprá la Simulación Matrix.', check: () => game.businesses.matrixSimulation.level >= 1, bonusText: '+25% Ganancias Glob.' },
+            { id: 'ach_8', name: 'Salida a Bolsa', desc: 'Realizá tu primera IPO de Prestigio.', check: () => game.totalPrestiges >= 1, bonusText: '+15% Ganancias Glob.' }
+        ];
+
+        let hackNeedlePos = 0;
+        let hackDirection = 1;
+        let overclockTimer = 0;
+        let overclockMultiplier = 1.0;
+
+        let cryptoMarket = {
+            CYBER: { name: 'CyberCoin (CYB)', price: 100, history: [100, 102, 98, 105, 110], volatility: 0.08 },
+            NEO: { name: 'NeoToken (NEO)', price: 1500, history: [1500, 1480, 1550, 1600, 1520], volatility: 0.05 }
+        };
+
+        let businessProgress = {
+            cryptoRig: 0, aiServer: 0, neuralNet: 0, quantumComputer: 0,
+            cyberSatellite: 0, globalBotnet: 0, neuralInterface: 0, matrixSimulation: 0
+        };
+
+        /* ==========================================================================
+           2. MATEMÁTICAS Y FORMATEADOR
+           ========================================================================== */
+
+        const NUMBER_SUFFIXES = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+
+        function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num) || num < 0) return '$0';
+            if (num < 1000) return '$' + num.toFixed(num < 10 ? 1 : 0);
+            
+            const exp = Math.floor(Math.log10(num) / 3);
+            if (exp >= NUMBER_SUFFIXES.length) return '$' + num.toExponential(2);
+            
+            const scaled = num / Math.pow(10, exp * 3);
+            return '$' + scaled.toFixed(2) + ' ' + NUMBER_SUFFIXES[exp];
+        }
+
+        function formatRawNumber(num) {
+            if (num === null || num === undefined || isNaN(num) || num < 0) return '0';
+            if (num < 1000) return Math.floor(num).toString();
+            const exp = Math.floor(Math.log10(num) / 3);
+            if (exp >= NUMBER_SUFFIXES.length) return num.toExponential(2);
+            const scaled = num / Math.pow(10, exp * 3);
+            return scaled.toFixed(2) + ' ' + NUMBER_SUFFIXES[exp];
+        }
+
+        function getAchievementMultiplier() {
+            let mult = 1.0;
+            ACHIEVEMENTS_CONFIG.forEach(ach => { if (game.achievements[ach.id]) mult += 0.05; });
+            return mult;
+        }
+
+        function getPrestigeMultiplier() {
+            const tokenBonus = 1 + (game.cyberTokens * 0.20);
+            let perkBonus = 1;
+            const ascLevel = game.ascension['asc_global_1'] || 0;
+            if (ascLevel > 0) perkBonus += ascLevel * 0.50;
+
+            return tokenBonus * perkBonus * getAchievementMultiplier();
+        }
+
+        function getMilestoneMultiplier(level) {
+            let mult = 1;
+            if (level >= 25) mult *= 2;
+            if (level >= 50) mult *= 2;
+            if (level >= 100) mult *= 4;
+            if (level >= 200) mult *= 5;
+            return mult;
+        }
+
+        function getUpgradeMultiplierForBusiness(busId) {
+            let mult = 1;
+            UPGRADE_CONFIG.forEach(up => {
+                if (up.target === busId && game.upgrades[up.id]) mult *= up.mult;
+            });
+            return mult;
+        }
+
+        function getBusinessIncomePerCycle(busId) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const level = game.businesses[busId].level;
+            if (level <= 0) return 0;
+
+            const base = conf.baseIncome * level;
+            const milestoneMult = getMilestoneMultiplier(level);
+            const upgradeMult = getUpgradeMultiplierForBusiness(busId);
+            const prestigeMult = getPrestigeMultiplier();
+
+            return base * milestoneMult * upgradeMult * prestigeMult * overclockMultiplier;
+        }
+
+        function getTotalIncomePerSecond() {
+            let total = 0;
+            BUSINESS_CONFIG.forEach(conf => {
+                const busState = game.businesses[conf.id];
+                if (busState.level > 0) {
+                    total += getBusinessIncomePerCycle(conf.id) / conf.timeSeconds;
+                }
+            });
+            return total;
+        }
+
+        function getBusinessCostForLevels(busId, count) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const currentLevel = game.businesses[busId].level;
+            
+            let costDiscount = 1.0;
+            if (game.ascension['asc_cost_1']) {
+                costDiscount = Math.pow(0.9, game.ascension['asc_cost_1']);
+            }
+
+            let totalCost = 0;
+            for (let i = 0; i < count; i++) {
+                totalCost += conf.baseCost * Math.pow(conf.costMultiplier, currentLevel + i);
+            }
+            return totalCost * costDiscount;
+        }
+
+        function getMaxBuyableLevels(busId) {
+            const conf = BUSINESS_CONFIG.find(b => b.id === busId);
+            const currentLevel = game.businesses[busId].level;
+            let costDiscount = 1.0;
+            if (game.ascension['asc_cost_1']) {
+                costDiscount = Math.pow(0.9, game.ascension['asc_cost_1']);
+            }
+
+            let count = 0;
+            let accumulatedCost = 0;
+            while (count < 1000) {
+                const nextLevelCost = (conf.baseCost * Math.pow(conf.costMultiplier, currentLevel + count)) * costDiscount;
+                if (accumulatedCost + nextLevelCost <= game.cash) {
+                    accumulatedCost += nextLevelCost;
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            return { count: Math.max(1, count), cost: accumulatedCost };
+        }
+
+        function getClickPower() {
+            let power = 1;
+            if (game.upgrades['up_click_1']) power *= 2;
+            if (game.upgrades['up_click_2']) power *= 3;
+            if (game.ascension['asc_click_1']) power *= Math.pow(2, game.ascension['asc_click_1']);
+            
+            return power * getPrestigeMultiplier() * overclockMultiplier;
+        }
+
+        function calculateClaimableTokens() {
+            if (game.totalCashEarned < 100000) return 0;
+            const rawTokens = Math.floor(15 * Math.sqrt(game.totalCashEarned / 1000000));
+            return Math.max(0, rawTokens - game.cyberTokens);
+        }
+
+        /* ==========================================================================
+           3. SINTETIZADOR DE AUDIO WEB AUDIO API
+           ========================================================================== */
+
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!game.audioEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.04);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'buy') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(600, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'hack_success') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.setValueAtTime(800, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {}
+        }
+
+        function toggleAudio() {
+            game.audioEnabled = !game.audioEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (game.audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-cyan-400';
+                showToast('Sonido Activado', 'info');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                showToast('Sonido Silenciado', 'info');
+            }
+        }
+
+        /* ==========================================================================
+           4. HACKEO Y TRADING CRYPTO
+           ========================================================================== */
+
+        function updateHackMinigame(dt) {
+            if (overclockTimer > 0) {
+                overclockTimer -= dt;
+                document.getElementById('stat-overclock').innerText = `x5.0 (${Math.ceil(overclockTimer)}s)`;
+                document.getElementById('hack-status-badge').innerText = `ACTIVO (${Math.ceil(overclockTimer)}s)`;
+                document.getElementById('hack-status-badge').className = "text-[10px] font-mono font-bold text-amber-400 animate-pulse";
+                if (overclockTimer <= 0) {
+                    overclockMultiplier = 1.0;
+                    document.getElementById('stat-overclock').innerText = 'x1.0';
+                    document.getElementById('hack-status-badge').innerText = 'Sincronizado';
+                    document.getElementById('hack-status-badge').className = "text-[10px] font-mono font-bold text-slate-400";
+                }
+            } else {
+                hackNeedlePos += hackDirection * 60 * dt;
+                if (hackNeedlePos >= 100) { hackNeedlePos = 100; hackDirection = -1; }
+                if (hackNeedlePos <= 0) { hackNeedlePos = 0; hackDirection = 1; }
+                
+                const needleEl = document.getElementById('hack-needle');
+                if (needleEl) needleEl.style.left = `${hackNeedlePos}%`;
+            }
+        }
+
+        function executeHackAttempt() {
+            if (overclockTimer > 0) {
+                showToast('¡El Overclock ya se encuentra activo!', 'info');
+                return;
+            }
+
+            if (hackNeedlePos >= 40 && hackNeedlePos <= 60) {
+                overclockMultiplier = 5.0;
+                overclockTimer = 30;
+                game.totalHacks += 1;
+                playSound('hack_success');
+                showToast('¡HACKEO EXITOSO! OVERCLOCK x5 ACTIVADO', 'success');
+                addLog('[CYBER-HACK]: Hackeo de precisión exitoso. Boost x5 activo.');
+                checkAchievements();
+            } else {
+                showToast('Hackeo fallido. Reintenta la sincronización.', 'error');
+            }
+        }
+
+        function updateCryptoPrices() {
+            Object.keys(cryptoMarket).forEach(key => {
+                const asset = cryptoMarket[key];
+                const changePercent = (Math.random() - 0.48) * asset.volatility;
+                asset.price = Math.max(10, asset.price * (1 + changePercent));
+                asset.history.push(asset.price);
+                if (asset.history.length > 20) asset.history.shift();
+            });
+            renderCryptoMarket();
+        }
+
+        function buyCrypto(symbol) {
+            const asset = cryptoMarket[symbol];
+            if (game.cash >= asset.price) {
+                game.cash -= asset.price;
+                game.portfolio[symbol].amount += 1;
+                game.portfolio[symbol].buyPrice = asset.price;
+                playSound('buy');
+                showToast(`Comprado 1 ${symbol}`, 'success');
+                renderCryptoMarket();
+                updateHeaderStats();
+            } else {
+                showToast('Capital insuficiente', 'error');
+            }
+        }
+
+        function sellCrypto(symbol) {
+            const userAsset = game.portfolio[symbol];
+            if (userAsset.amount > 0) {
+                const asset = cryptoMarket[symbol];
+                const profit = asset.price - userAsset.buyPrice;
+                game.cash += asset.price;
+                game.cryptoProfit += Math.max(0, profit);
+                userAsset.amount -= 1;
+                playSound('click');
+                showToast(`Vendido 1 ${symbol}`, 'success');
+                checkAchievements();
+                renderCryptoMarket();
+                updateHeaderStats();
+            } else {
+                showToast('Sin unidades para vender', 'error');
+            }
+        }
+
+        function drawCryptoChart() {
+            const canvas = document.getElementById('market-chart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const history = cryptoMarket.CYBER.history;
+            const max = Math.max(...history);
+            const min = Math.min(...history);
+            const range = max - min || 1;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2;
+
+            history.forEach((val, i) => {
+                const x = (i / (history.length - 1)) * canvas.width;
+                const y = canvas.height - ((val - min) / range) * (canvas.height - 20) - 10;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        /* ==========================================================================
+           5. INTERACCIONES DEL JUGADOR Y COMPRAS
+           ========================================================================== */
+
+        function handleManualClick(event) {
+            const earned = getClickPower();
+            game.cash += earned;
+            game.totalCashEarned += earned;
+            game.totalClicks += 1;
+            game.clickEarnings += earned;
+
+            playSound('click');
+            createSparks(event.clientX, event.clientY);
+            showFloatingText(event.clientX, event.clientY, `+${formatNumber(earned)}`);
+            checkAchievements();
+            updateHeaderStats();
+        }
+
+        function createSparks(x, y) {
+            for (let i = 0; i < 5; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark bg-cyan-400';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 25 + Math.random() * 30;
+                spark.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+                spark.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+                spark.style.left = `${x}px`;
+                spark.style.top = `${y}px`;
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 500);
+            }
+        }
+
+        function buyBusiness(busId) {
+            let levelsToBuy = game.buyMultiplier;
+            let cost = 0;
+
+            if (levelsToBuy === 'MAX') {
+                const maxInfo = getMaxBuyableLevels(busId);
+                levelsToBuy = maxInfo.count;
+                cost = maxInfo.cost;
+            } else {
+                cost = getBusinessCostForLevels(busId, levelsToBuy);
+            }
+
+            if (game.cash >= cost && cost > 0) {
+                game.cash -= cost;
+                game.businesses[busId].level += levelsToBuy;
+                playSound('buy');
+                addLog(`Comprado +${levelsToBuy} Lvl en ${BUSINESS_CONFIG.find(b => b.id === busId).name}.`);
+                checkAchievements();
+                renderBusinesses();
+                updateHeaderStats();
+            } else {
+                showToast('Capital insuficiente', 'error');
+            }
+        }
+
+        function manualCollect(busId) {
+            const busState = game.businesses[busId];
+            if (busState.level <= 0) return;
+
+            if (businessProgress[busId] >= 100) {
+                const earned = getBusinessIncomePerCycle(busId);
+                game.cash += earned;
+                game.totalCashEarned += earned;
+                businessProgress[busId] = 0;
+                playSound('click');
+                checkAchievements();
+                updateHeaderStats();
+            }
+        }
+
+        function buyUpgrade(upgradeId) {
+            const up = UPGRADE_CONFIG.find(u => u.id === upgradeId);
+            if (!up || game.upgrades[upgradeId]) return;
+
+            if (game.cash >= up.cost) {
+                game.cash -= up.cost;
+                game.upgrades[upgradeId] = true;
+                playSound('buy');
+                showToast(`Mejora instalada: ${up.name}`, 'success');
+                addLog(`I+D instalada: ${up.name}`);
+                renderUpgrades();
+                updateHeaderStats();
+            } else {
+                showToast('Capital insuficiente para la mejora', 'error');
+            }
+        }
+
+        function buyManager(managerId) {
+            const mgr = MANAGER_CONFIG.find(m => m.id === managerId);
+            if (!mgr || game.businesses[mgr.busId].manager) return;
+
+            if (game.cash >= mgr.cost) {
+                game.cash -= mgr.cost;
+                game.businesses[mgr.busId].manager = true;
+                playSound('buy');
+                showToast(`Gerente contratado: ${mgr.name}`, 'success');
+                addLog(`Gerente asignado a ${BUSINESS_CONFIG.find(b => b.id === mgr.busId).name}`);
+                checkAchievements();
+                renderManagers();
+                renderBusinesses();
+                updateHeaderStats();
+            } else {
+                showToast('Capital insuficiente para el gerente', 'error');
+            }
+        }
+
+        function buyAscensionPerk(perkId) {
+            const perk = ASCENSION_CONFIG.find(a => a.id === perkId);
+            if (!perk) return;
+
+            const currentLevel = game.ascension[perkId] || 0;
+            const cost = perk.cost * (currentLevel + 1);
+
+            if (game.cyberTokens >= cost) {
+                game.cyberTokens -= cost;
+                game.ascension[perkId] = currentLevel + 1;
+                playSound('buy');
+                showToast(`Perk mejorado: ${perk.name}`, 'success');
+                renderAscensionPerks();
+                updateHeaderStats();
+            } else {
+                showToast('Tokens Cyber insuficientes', 'error');
+            }
+        }
+
+        function setBuyMultiplier(mult) {
+            game.buyMultiplier = mult;
+            document.querySelectorAll('.buy-mult-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+            event.target.classList.remove('bg-slate-800', 'text-slate-400');
+            event.target.classList.add('bg-cyan-600', 'text-white');
+            renderBusinesses();
+        }
+
+        function checkAchievements() {
+            ACHIEVEMENTS_CONFIG.forEach(ach => {
+                if (!game.achievements[ach.id] && ach.check()) {
+                    game.achievements[ach.id] = true;
+                    playSound('hack_success');
+                    showToast(`¡LOGRO DESBLOQUEADO: ${ach.name}!`, 'success');
+                    addLog(`[LOGRO]: ${ach.name} completado.`);
+                    renderAchievements();
+                }
+            });
+        }
+
+        function executePrestige() {
+            const tokensToGain = calculateClaimableTokens();
+            if (tokensToGain <= 0) {
+                showToast('Necesitás más capital histórico para realizar IPO', 'error');
+                return;
+            }
+
+            game.cyberTokens += tokensToGain;
+            game.totalPrestiges += 1;
+            game.cash = 10;
+            game.buyMultiplier = 1;
+
+            BUSINESS_CONFIG.forEach(b => {
+                game.businesses[b.id] = { level: (b.id === 'cryptoRig' ? 1 : 0), manager: false };
+                businessProgress[b.id] = 0;
+            });
+
+            game.upgrades = {};
+            playSound('hack_success');
+            showToast(`¡IPO Exitosa! Reclamados +${tokensToGain} Tokens Cyber`, 'success');
+            addLog(`[IPO]: Corporación reorganizada en bolsa. +${tokensToGain} Tokens.`);
+
+            checkAchievements();
+            switchTab('businesses');
+            renderAll();
+        }
+
+        /* ==========================================================================
+           6. CICLO PRINCIPAL (GAME LOOP)
+           ========================================================================== */
+
+        let lastFrameTime = Date.now();
+        let cryptoTimer = 0;
+
+        function gameLoop() {
+            const now = Date.now();
+            const dt = (now - lastFrameTime) / 1000;
+            lastFrameTime = now;
+
+            game.timePlayed += dt;
+            updateHackMinigame(dt);
+
+            cryptoTimer += dt;
+            if (cryptoTimer >= 3) {
+                cryptoTimer = 0;
+                updateCryptoPrices();
+            }
+
+            BUSINESS_CONFIG.forEach(conf => {
+                const busId = conf.id;
+                const busState = game.businesses[busId];
+
+                if (busState.level > 0) {
+                    if (busState.manager) {
+                        businessProgress[busId] += (100 / conf.timeSeconds) * dt;
+                        if (businessProgress[busId] >= 100) {
+                            const cycles = Math.floor(businessProgress[busId] / 100);
+                            businessProgress[busId] %= 100;
+                            const earned = getBusinessIncomePerCycle(busId) * cycles;
+                            game.cash += earned;
+                            game.totalCashEarned += earned;
+                        }
+                    } else {
+                        if (businessProgress[busId] > 0 && businessProgress[busId] < 100) {
+                            businessProgress[busId] += (100 / conf.timeSeconds) * dt;
+                            if (businessProgress[busId] >= 100) businessProgress[busId] = 100;
+                        }
+                    }
+                }
+            });
+
+            updateHeaderStats();
+            updateProgressBars();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        /* ==========================================================================
+           7. RENDERIZADO DE INTERFAZ
+           ========================================================================== */
+
+        function updateHeaderStats() {
+            document.getElementById('stat-cash').innerText = formatNumber(game.cash);
+            document.getElementById('stat-income').innerText = formatNumber(getTotalIncomePerSecond()) + '/s';
+            document.getElementById('stat-tokens').innerHTML = `<i class="fa-solid fa-coins text-xs"></i> ${formatRawNumber(game.cyberTokens)}`;
+            document.getElementById('click-power-text').innerText = `+${formatNumber(getClickPower())}`;
+
+            const claimable = calculateClaimableTokens();
+            document.getElementById('prestige-claimable').innerText = `+${formatRawNumber(claimable)} Tokens`;
+            document.getElementById('prestige-current-bonus').innerText = `Bonus de Ganancia Global: x${getPrestigeMultiplier().toFixed(2)}`;
+            document.getElementById('btn-do-prestige').disabled = (claimable <= 0);
+        }
+
+        function renderBusinesses() {
+            const container = document.getElementById('businesses-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            BUSINESS_CONFIG.forEach(conf => {
+                const busState = game.businesses[conf.id];
+                const cycleIncome = getBusinessIncomePerCycle(conf.id);
+                
+                let buyCount = game.buyMultiplier;
+                let cost = 0;
+
+                if (buyCount === 'MAX') {
+                    const maxInfo = getMaxBuyableLevels(conf.id);
+                    buyCount = maxInfo.count;
+                    cost = maxInfo.cost;
+                } else {
+                    cost = getBusinessCostForLevels(conf.id, buyCount);
+                }
+
+                const canAfford = (game.cash >= cost && cost > 0);
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-950/80 rounded-xl border p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 ${busState.level > 0 ? 'border-slate-800' : 'border-slate-900 opacity-70'}`;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${conf.color} flex items-center justify-center text-white text-xl shadow-lg shrink-0">
+                            <i class="fa-solid ${conf.icon}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-xs sm:text-sm text-slate-100 truncate">${conf.name}</h4>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 font-bold">Lvl ${busState.level}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 font-mono mt-0.5">
+                                Producción: <span class="text-emerald-400 font-semibold">${formatNumber(cycleIncome)}</span> / ${conf.timeSeconds}s
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <div class="flex-1 sm:w-36">
+                            <button onclick="manualCollect('${conf.id}')" ${busState.level === 0 || busState.manager ? 'disabled' : ''} class="w-full h-9 rounded-lg bg-slate-900 border border-slate-800 overflow-hidden relative group transition-all">
+                                <div id="pbar-${conf.id}" class="h-full bg-gradient-to-r from-cyan-600 to-teal-500 transition-all duration-75" style="width: 0%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-[10px] font-mono font-bold text-slate-200">
+                                    ${busState.manager ? '<i class="fa-solid fa-robot mr-1 text-cyan-400"></i> Auto' : 'Cobrar'}
+                                </span>
+                            </button>
+                        </div>
+
+                        <button onclick="buyBusiness('${conf.id}')" class="px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all flex flex-col items-center justify-center min-w-[100px] ${canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                            <span>+${buyCount} Lvl</span>
+                            <span class="text-[10px] font-normal opacity-90">${formatNumber(cost)}</span>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function updateProgressBars() {
+            BUSINESS_CONFIG.forEach(conf => {
+                const bar = document.getElementById(`pbar-${conf.id}`);
+                if (bar) bar.style.width = `${businessProgress[conf.id]}%`;
+            });
+        }
+
+        function renderCryptoMarket() {
+            const container = document.getElementById('crypto-assets-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            Object.keys(cryptoMarket).forEach(key => {
+                const asset = cryptoMarket[key];
+                const userHolding = game.portfolio[key] || { amount: 0, buyPrice: 0 };
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <span class="text-xs font-bold text-slate-200">${asset.name}</span>
+                            <div class="text-[10px] text-slate-400 font-mono">En Cartera: ${userHolding.amount}</div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm font-black text-emerald-400 font-mono">${formatNumber(asset.price)}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="buyCrypto('${key}')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">Comprar</button>
+                        <button onclick="sellCrypto('${key}')" class="flex-1 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs">Vender</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            drawCryptoChart();
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            UPGRADE_CONFIG.forEach(up => {
+                const bought = game.upgrades[up.id];
+                const canAfford = game.cash >= up.cost;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between gap-3 ${bought ? 'bg-slate-950/40 border-emerald-900/40 opacity-60' : 'bg-slate-950/80 border-slate-800'}`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-slate-200">${up.name}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${up.desc}</div>
+                        <div class="text-[10px] font-mono text-emerald-400 mt-1 font-bold">${formatNumber(up.cost)}</div>
+                    </div>
+                    <button onclick="buyUpgrade('${up.id}')" ${bought || !canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${bought ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-md' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        ${bought ? 'Instalada' : 'Comprar'}
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderManagers() {
+            const container = document.getElementById('managers-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            MANAGER_CONFIG.forEach(mgr => {
+                const bought = game.businesses[mgr.busId].manager;
+                const canAfford = game.cash >= mgr.cost;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between gap-3 ${bought ? 'bg-slate-950/40 border-emerald-900/40 opacity-60' : 'bg-slate-950/80 border-slate-800'}`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-tie text-cyan-400"></i> ${mgr.name}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${mgr.desc}</div>
+                        <div class="text-[10px] font-mono text-emerald-400 mt-1 font-bold">${formatNumber(mgr.cost)}</div>
+                    </div>
+                    <button onclick="buyManager('${mgr.id}')" ${bought || !canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${bought ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : canAfford ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-md' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        ${bought ? 'Contratado' : 'Contratar'}
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievements-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            ACHIEVEMENTS_CONFIG.forEach(ach => {
+                const unlocked = game.achievements[ach.id];
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between gap-3 ${unlocked ? 'bg-amber-950/20 border-amber-800/50' : 'bg-slate-950/80 border-slate-800 opacity-60'}`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-trophy ${unlocked ? 'text-amber-400' : 'text-slate-600'}"></i> ${ach.name}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${ach.desc}</div>
+                        <div class="text-[10px] font-mono text-amber-400 mt-1 font-bold">${ach.bonusText}</div>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-2 py-1 rounded ${unlocked ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-500'}">
+                        ${unlocked ? 'DESBLOQUEADO' : 'BLOQUEADO'}
+                    </span>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAscensionPerks() {
+            const container = document.getElementById('ascension-upgrades-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            ASCENSION_CONFIG.forEach(perk => {
+                const currentLevel = game.ascension[perk.id] || 0;
+                const cost = perk.cost * (currentLevel + 1);
+                const canAfford = game.cyberTokens >= cost;
+
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-xl border border-purple-900/50 bg-slate-950/80 flex items-center justify-between gap-3';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                            ${perk.name} <span class="text-[10px] px-1.5 py-0.2 rounded bg-purple-950 border border-purple-800 font-mono">Lvl ${currentLevel}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${perk.desc}</div>
+                        <div class="text-[10px] font-mono text-purple-400 mt-1 font-bold">${cost} Tokens Cyber</div>
+                    </div>
+                    <button onclick="buyAscensionPerk('${perk.id}')" ${!canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${canAfford ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/30' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+                        Mejorar
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAll() {
+            renderBusinesses();
+            renderUpgrades();
+            renderManagers();
+            renderAchievements();
+            renderAscensionPerks();
+            renderCryptoMarket();
+            updateHeaderStats();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-500/30');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'border-transparent');
+                activeBtn.classList.add('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-500/30');
+            }
+
+            if (tabId === 'businesses') renderBusinesses();
+            if (tabId === 'market') renderCryptoMarket();
+            if (tabId === 'upgrades') renderUpgrades();
+            if (tabId === 'managers') renderManagers();
+            if (tabId === 'achievements') renderAchievements();
+            if (tabId === 'prestige') renderAscensionPerks();
+        }
+
+        /* ==========================================================================
+           8. TOASTS, LOGS Y GUARDADO
+           ========================================================================== */
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-emerald-950 border-emerald-800 text-emerald-300',
+                error: 'bg-red-950 border-red-800 text-red-300',
+                info: 'bg-slate-900 border-slate-800 text-cyan-300'
+            };
+
+            toast.className = `px-4 py-2.5 rounded-xl border text-xs font-medium shadow-2xl backdrop-blur-md transition-all transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2 ${colors[type]}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        function showFloatingText(x, y, text) {
+            const el = document.createElement('div');
+            el.className = 'float-text text-cyan-400 font-mono text-sm';
+            el.innerText = text;
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 20}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function addLog(text) {
+            const container = document.getElementById('activity-log');
+            if (!container) return;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const logEntry = document.createElement('div');
+            logEntry.innerText = `[${time}] ${text}`;
+            container.prepend(logEntry);
+            if (container.children.length > 25) container.removeChild(container.lastChild);
+        }
+
+        const SAVE_KEY = 'CyberEmpireTycoon_PRO_v3.5';
+
+        function saveGame() {
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+            } catch (e) {}
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem(SAVE_KEY);
+                if (saved) {
+                    const loaded = JSON.parse(saved);
+                    game = { ...DEFAULT_STATE, ...loaded };
+                    game.businesses = { ...DEFAULT_STATE.businesses, ...(loaded.businesses || {}) };
+                    game.upgrades = { ...DEFAULT_STATE.upgrades, ...(loaded.upgrades || {}) };
+                    game.ascension = { ...DEFAULT_STATE.ascension, ...(loaded.ascension || {}) };
+                    game.achievements = { ...DEFAULT_STATE.achievements, ...(loaded.achievements || {}) };
+                    game.portfolio = { ...DEFAULT_STATE.portfolio, ...(loaded.portfolio || {}) };
+                }
+            } catch (e) {
+                game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+        }
+
+        function manualSave() {
+            saveGame();
+            showToast('Partida guardada correctamente', 'success');
+        }
+
+        function openResetModal() { document.getElementById('reset-modal').classList.remove('hidden'); }
+        function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); }
+
+        function confirmReset() {
+            localStorage.removeItem(SAVE_KEY);
+            game = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            closeResetModal();
+            renderAll();
+            showToast('Juego reiniciado por completo', 'info');
+        }
+
+        setInterval(saveGame, 15000);
+
+        window.onload = function() {
+            loadGame();
+            renderAll();
+            lastFrameTime = Date.now();
+            requestAnimationFrame(gameLoop);
+            addLog('[SISTEMA]: Núcleo Cyber Empire cargado y ejecutando.');
+        };
+    </script>
+</body>
+</html>
+```
