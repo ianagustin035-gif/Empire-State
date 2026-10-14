@@ -1,0 +1,451 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tech & AI Cyber Empire</title>
+<style>
+:root{color-scheme:dark;--bg:#08101d;--panel:#121e32;--line:#2a3d5d;--text:#edf4ff;--muted:#9aacc8;--cyan:#48e5ff;--green:#54f0a2;--gold:#ffd166;--red:#ff7188}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#193052,#08101d 62%);color:var(--text);font-family:system-ui,Arial,sans-serif}
+header{padding:20px max(14px,4vw);background:#08101df0;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.eyebrow{font-size:10px;letter-spacing:2px;color:var(--green);font-weight:900}
+.brand{font-size:clamp(22px,4vw,34px);font-weight:950}
+.brand span{color:var(--cyan)}
+.wallet{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.wallet div{flex:1;min-width:105px;padding:10px 12px;border:1px solid var(--line);background:#111d30;border-radius:11px}
+.wallet small{display:block;color:var(--muted);font-size:11px}
+.wallet strong{font-size:19px}
+main{max-width:1100px;margin:auto;padding:18px 13px 40px}
+.tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:15px}
+.tabs button{white-space:nowrap}
+.panel{background:linear-gradient(145deg,#121e32,#0d1627);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:14px}
+.hero{background:linear-gradient(120deg,#102d47,#2b2047)}
+h1{font-size:clamp(27px,5vw,44px);line-height:1.05;margin:10px 0}
+h2{margin:0 0 12px}
+p{line-height:1.45}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.cyan{color:var(--cyan)}
+button{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#1b2c47;color:var(--text);font-weight:800;cursor:pointer}
+button:hover{border-color:var(--cyan);filter:brightness(1.12)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:linear-gradient(110deg,#00b9d3,#795bff);border:0}
+.active{border-color:var(--cyan);background:#16425b}
+.big{width:100%;padding:18px 12px;font-size:20px;margin:8px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}
+.stat{background:#0b1424;border:1px solid #22334d;border-radius:11px;padding:12px;min-width:0}
+.stat small{color:var(--muted);display:block}
+.stat strong{display:block;font-size:19px;margin-top:5px;overflow-wrap:anywhere}
+.list{display:grid;gap:9px}
+.item{display:flex;align-items:center;gap:10px;padding:11px;background:#0b1424;border:1px solid #22334d;border-radius:11px}
+.ico{font-size:24px}
+.details{flex:1;min-width:0}
+.details p{margin:4px 0;font-size:12px;color:var(--muted)}
+.action{text-align:right;display:grid;gap:6px;justify-items:end}
+.action button{padding:8px 10px;font-size:12px}
+.tag{display:inline-block;background:#173b38;color:var(--green);font-size:10px;border-radius:5px;padding:3px 6px}
+.hidden{display:none!important}
+.notice{padding:12px;border:1px solid #3b345c;background:#211d39;border-radius:10px;margin-bottom:12px}
+.positive{color:var(--green)}
+.negative{color:var(--red)}
+.log{display:grid;gap:6px}
+.log div{font-size:12px;background:#0b1424;padding:8px;border-radius:7px;color:#c7d5eb}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9;background:#15283c;border:1px solid var(--cyan);padding:12px 16px;border-radius:10px;box-shadow:0 6px 24px #0009;max-width:92%;text-align:center}
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:16px}
+@media(max-width:500px){.panel{padding:13px}.item{align-items:flex-start;padding:9px;gap:7px}.ico{font-size:20px}.action button{font-size:10px;padding:7px}.wallet strong{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">NEXT-GEN BUSINESS SIMULATOR</div>
+<div class="brand">TECH <span>& AI</span> CYBER EMPIRE</div>
+<div class="wallet">
+<div><small>💵 Dinero</small><strong id="cash">$500</strong></div>
+<div><small>⚡ Ingresos / segundo</small><strong id="income">$0</strong></div>
+<div><small>🏆 Nivel</small><strong id="level">1</strong></div>
+</div>
+</header>
+
+<main>
+<nav class="tabs" id="tabs">
+<button class="active" data-tab="home">🏠 Inicio</button>
+<button data-tab="empire">🏙️ Empresas</button>
+<button data-tab="upgrades">⚡ Mejoras</button>
+<button data-tab="team">🤖 Equipo</button>
+<button data-tab="investments">📈 Inversiones</button>
+<button data-tab="missions">🎯 Misiones</button>
+<button data-tab="stats">📊 Estadísticas</button>
+</nav>
+
+<section id="tab-home">
+<div class="panel hero">
+<div class="eyebrow">TU HISTORIA EMPIEZA AHORA</div>
+<h1>Construí tu propio<br><span class="cyan">imperio tecnológico.</span></h1>
+<p>Generá dinero, comprá empresas, contratá expertos e invertí en compañías tecnológicas.</p>
+<button class="primary big" id="startBtn">🚀 EMPEZAR A JUGAR</button>
+<button class="big" id="bonusBtn">🎁 Reclamar bono inicial de $1.000</button>
+<p class="small muted">Empezás con $500. Reclamá el bono y tocá GENERAR DINERO para arrancar.</p>
+</div>
+<div class="panel">
+<h2>💸 Generador de dinero</h2>
+<p class="muted">Este botón funciona desde el primer segundo. Cada toque suma dinero al saldo.</p>
+<button class="primary big" id="workBtn">💵 GENERAR DINERO <span id="clickValue">+$1</span></button>
+<p class="small muted">Las mejoras aumentan tus ganancias por toque.</p>
+</div>
+<div class="stats">
+<div class="stat"><small>Valor del imperio</small><strong id="valuation">$500</strong></div>
+<div class="stat"><small>Total ganado</small><strong id="earned">$0</strong></div>
+<div class="stat"><small>Toques</small><strong id="taps">0</strong></div>
+<div class="stat"><small>Mejoras</small><strong id="upgradeCount">0</strong></div>
+<div class="stat"><small>Empleados</small><strong id="teamCount">0</strong></div>
+<div class="stat"><small>Núcleos de prestigio</small><strong id="cores">0</strong></div>
+</div>
+<div class="panel" style="margin-top:14px"><h2>📡 Actividad reciente</h2><div class="log" id="activityLog"></div></div>
+</section>
+
+<section id="tab-empire" class="hidden">
+<div class="panel"><h2>🏙️ Tus empresas</h2><p class="muted">Cada nivel genera ingresos automáticamente.</p><div class="list" id="businessList"></div></div>
+</section>
+<section id="tab-upgrades" class="hidden">
+<div class="panel"><h2>⚡ Mejoras tecnológicas</h2><div class="list" id="upgradeList"></div></div>
+</section>
+<section id="tab-team" class="hidden">
+<div class="panel"><h2>🤖 Contratá tu equipo</h2><div class="list" id="teamList"></div></div>
+</section>
+<section id="tab-investments" class="hidden">
+<div class="panel">
+<h2>📈 Bolsa tecnológica</h2>
+<div class="notice">Mercado ficticio: los precios cambian cada cinco segundos. Comprá y vendé acciones usando dinero del juego.</div>
+<div class="stats">
+<div class="stat"><small>Valor de cartera</small><strong id="portfolioValue">$0</strong></div>
+<div class="stat"><small>Capital invertido</small><strong id="investedValue">$0</strong></div>
+<div class="stat"><small>Ganancia / pérdida</small><strong id="profitValue">$0</strong></div>
+</div>
+<div class="list" id="stockList" style="margin-top:12px"></div>
+</div>
+</section>
+<section id="tab-missions" class="hidden">
+<div class="panel"><h2>🎯 Misiones y recompensas</h2><div class="list" id="missionList"></div></div>
+</section>
+<section id="tab-stats" class="hidden">
+<div class="panel"><h2>📊 Estadísticas</h2><div class="list" id="analytics"></div></div>
+<div class="panel">
+<h2>💾 Guardado y opciones</h2>
+<div class="list">
+<button id="saveBtn">💾 Guardar ahora</button>
+<button id="soundBtn">🔊 Sonido: activado</button>
+<button id="exportBtn">📤 Exportar partida</button>
+<button id="importBtn">📥 Importar partida</button>
+<button class="primary" id="prestigeBtn">🌌 Reiniciar con prestigio</button>
+<button id="resetBtn">🗑️ Borrar partida</button>
+</div>
+<p class="small muted">El prestigio requiere $1.000.000 de valoración. Reinicia la partida actual y te da un multiplicador permanente.</p>
+</div>
+</section>
+</main>
+<footer>TECH & AI CYBER EMPIRE · Guardado automático en este navegador</footer>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const fmt=n=>{
+ n=Number(n)||0;
+ if(n>=1e12)return "$"+(n/1e12).toFixed(2)+"T";
+ if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B";
+ if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M";
+ if(n>=1e3)return "$"+(n/1e3).toFixed(2)+"K";
+ return "$"+Math.floor(n).toLocaleString("en-US");
+};
+
+const DIVS=[
+{id:"apps",name:"App Studio",icon:"📱",desc:"Aplicaciones y suscripciones.",base:15,cost:50,growth:1.16},
+{id:"cloud",name:"Cloud Servers",icon:"☁️",desc:"Servidores para empresas.",base:75,cost:400,growth:1.17},
+{id:"security",name:"Cyber Security",icon:"🛡️",desc:"Protección de datos.",base:350,cost:2500,growth:1.18},
+{id:"ai",name:"AI Research Lab",icon:"🧠",desc:"Modelos de inteligencia artificial.",base:1800,cost:15000,growth:1.19},
+{id:"robotics",name:"Robotics Factory",icon:"🦾",desc:"Robots y automatización.",base:9000,cost:100000,growth:1.20},
+{id:"quantum",name:"Quantum Division",icon:"⚛️",desc:"Computación avanzada.",base:50000,cost:800000,growth:1.21},
+{id:"orbital",name:"Orbital Network",icon:"🛰️",desc:"Infraestructura espacial.",base:280000,cost:6500000,growth:1.22}
+];
+
+const UPGRADES=[
+{id:"marketing",name:"Marketing viral",icon:"📣",desc:"+25% de producción global.",cost:250,mult:1.25},
+{id:"automation",name:"Automatización",icon:"⚙️",desc:"+50% de producción global.",cost:1800,mult:1.5},
+{id:"neural",name:"Acelerador neuronal",icon:"🧬",desc:"Duplicá las ganancias por toque.",cost:6500,mult:2},
+{id:"cloud2",name:"Quantum Cloud",icon:"🌐",desc:"+75% de producción global.",cost:22000,mult:1.75},
+{id:"venture",name:"Capital de riesgo",icon:"💼",desc:"+20% de producción global.",cost:90000,mult:1.2},
+{id:"singularity",name:"La singularidad",icon:"✨",desc:"Duplicá la producción global.",cost:500000,mult:2}
+];
+
+const HIRES=[
+{id:"intern",name:"Pasante de IA",icon:"🧑‍💻",desc:"Talento con potencial.",cost:300,bonus:.10},
+{id:"engineer",name:"Ingeniero senior",icon:"👨‍🔬",desc:"Sistemas más eficientes.",cost:2500,bonus:.25},
+{id:"manager",name:"Gerente de operaciones",icon:"🧑‍💼",desc:"Organiza el negocio.",cost:18000,bonus:.5},
+{id:"scientist",name:"Científico de IA",icon:"👩‍🔬",desc:"Potencia la investigación.",cost:125000,bonus:1},
+{id:"ceo",name:"CEO legendario",icon:"🕴️",desc:"Un líder de clase mundial.",cost:1000000,bonus:2.5}
+];
+
+const STOCKS=[
+{id:"nova",name:"Nova AI",symbol:"NOVA",icon:"🧠",price:120,vol:.055},
+{id:"quantum",name:"QuantumTech",symbol:"QNTM",icon:"⚛️",price:440,vol:.085},
+{id:"cyber",name:"CyberShield",symbol:"CYBR",icon:"🛡️",price:260,vol:.035},
+{id:"orbit",name:"OrbitX",symbol:"ORBX",icon:"🛰️",price:850,vol:.11},
+{id:"green",name:"GreenGrid",symbol:"GRID",icon:"🌱",price:180,vol:.045}
+];
+
+let g, audio=null, toastTimer;
+
+function fresh(){
+ const x={cash:500,totalEarned:0,taps:0,divisions:{},upgrades:[],hires:[],cores:0,stocks:{},missions:[],log:[],sound:true,bonusClaimed:false,lastTime:Date.now()};
+ DIVS.forEach(d=>x.divisions[d.id]=0);
+ STOCKS.forEach(s=>x.stocks[s.id]={shares:0,invested:0,price:s.price,history:[s.price]});
+ return x;
+}
+g=fresh();
+
+function initStocks(){
+ STOCKS.forEach(s=>{
+  if(!g.stocks[s.id])g.stocks[s.id]={shares:0,invested:0,price:s.price,history:[s.price]};
+  const st=g.stocks[s.id];
+  st.shares=Number(st.shares)||0;
+  st.invested=Number(st.invested)||0;
+  st.price=Number(st.price)||s.price;
+  st.history=Array.isArray(st.history)?st.history:[st.price];
+ });
+}
+function has(id){return g.upgrades.includes(id);}
+function mult(){
+ let m=1+g.cores*.12;
+ UPGRADES.forEach(u=>{if(u.id!=="neural"&&has(u.id))m*=u.mult;});
+ m*=1+g.hires.reduce((a,id)=>a+(HIRES.find(h=>h.id===id)?.bonus||0),0);
+ return m;
+}
+function income(){return DIVS.reduce((a,d)=>a+(g.divisions[d.id]||0)*d.base*mult(),0);}
+function clickPower(){return Math.max(1,Math.floor((1+income()*.08)*(1+g.cores*.12)*(has("neural")?2:1)));}
+function portfolio(){return STOCKS.reduce((a,s)=>a+g.stocks[s.id].shares*g.stocks[s.id].price,0);}
+function invested(){return STOCKS.reduce((a,s)=>a+g.stocks[s.id].invested,0);}
+function valuation(){return g.cash+income()*120+portfolio()+DIVS.reduce((a,d)=>a+(g.divisions[d.id]||0)*d.cost*2,0);}
+function log(msg){g.log.unshift(new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+" · "+msg);g.log=g.log.slice(0,12);}
+function toast(msg){
+ const e=$("toast");e.textContent=msg;e.classList.remove("hidden");
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.add("hidden"),2200);
+}
+function save(){
+ try{g.lastTime=Date.now();localStorage.setItem("cyberEmpireBaseSave",JSON.stringify(g));}
+ catch(e){console.warn("No se pudo guardar",e);}
+}
+function load(){
+ try{
+  const raw=localStorage.getItem("cyberEmpireBaseSave");
+  if(raw){
+   const old=JSON.parse(raw);
+   g={...fresh(),...old};
+   g.divisions={...fresh().divisions,...(old.divisions||{})};
+   g.upgrades=old.upgrades||[];g.hires=old.hires||[];
+   g.stocks=old.stocks||{};g.missions=old.missions||[];g.log=old.log||[];
+   g.sound=old.sound!==false;
+   const seconds=Math.min(14400,Math.max(0,(Date.now()-(old.lastTime||Date.now()))/1000));
+   const away=income()*seconds;
+   if(away>0){g.cash+=away;g.totalEarned+=away;log("Ganancias offline: "+fmt(away));}
+  }
+ }catch(e){g=fresh();}
+ initStocks();save();
+}
+function moneySound(){
+ if(!g.sound)return;
+ try{
+  audio ||= new(window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==="suspended")audio.resume();
+  const t=audio.currentTime;
+  [880,1175,1568].forEach((f,i)=>{
+   const o=audio.createOscillator(),v=audio.createGain();
+   o.type="triangle";o.frequency.value=f;
+   v.gain.setValueAtTime(.001,t+i*.045);
+   v.gain.exponentialRampToValueAtTime(.06,t+i*.045+.015);
+   v.gain.exponentialRampToValueAtTime(.001,t+i*.045+.13);
+   o.connect(v);v.connect(audio.destination);
+   o.start(t+i*.045);o.stop(t+i*.045+.14);
+  });
+ }catch(e){}
+}
+function earn(n,msg){g.cash+=n;g.totalEarned+=n;if(msg)log(msg);}
+
+function work(){
+ const n=clickPower();earn(n);g.taps++;moneySound();
+ render();save();toast("💸 +"+fmt(n)+" ¡Dinero generado!");
+}
+function bonus(){
+ if(g.bonusClaimed){toast("Ya reclamaste el bono.");return;}
+ g.bonusClaimed=true;earn(1000,"Bono inicial: +$1.000");
+ moneySound();render();save();toast("🎁 ¡Recibiste $1.000!");
+}
+function buyDivision(id){
+ const d=DIVS.find(x=>x.id===id),n=g.divisions[id]||0;
+ const cost=Math.floor(d.cost*Math.pow(d.growth,n));
+ if(g.cash<cost){toast("No alcanza. Usá GENERAR DINERO.");return;}
+ g.cash-=cost;g.divisions[id]=n+1;moneySound();log("Compraste "+d.name);
+ render();save();toast("¡Empresa mejorada!");
+}
+function buyUpgrade(id){
+ const u=UPGRADES.find(x=>x.id===id);
+ if(has(id)||g.cash<u.cost)return;
+ g.cash-=u.cost;g.upgrades.push(id);moneySound();log("Mejora: "+u.name);
+ render();save();toast("⚡ Mejora comprada");
+}
+function hire(id){
+ const h=HIRES.find(x=>x.id===id);
+ if(g.hires.includes(id)||g.cash<h.cost)return;
+ g.cash-=h.cost;g.hires.push(id);moneySound();log("Contrataste "+h.name);
+ render();save();toast("🤖 ¡Contratación lista!");
+}
+function buyStock(id,max){
+ const s=STOCKS.find(x=>x.id===id),st=g.stocks[id];
+ const qty=max?Math.floor(g.cash/st.price):1;
+ if(qty<1||g.cash<st.price){toast("Necesitás más dinero para esa acción.");return;}
+ const cost=qty*st.price;g.cash-=cost;st.shares+=qty;st.invested+=cost;
+ moneySound();log("Compraste "+qty+" acción(es) de "+s.symbol);
+ render();save();
+}
+function sellStock(id){
+ const s=STOCKS.find(x=>x.id===id),st=g.stocks[id];
+ if(st.shares<=0)return;
+ const revenue=st.shares*st.price,profit=revenue-st.invested;
+ g.cash+=revenue;st.shares=0;st.invested=0;
+ moneySound();log("Vendiste "+s.symbol+" · resultado "+fmt(profit));
+ render();save();toast((profit>=0?"Ganancia: +":"Pérdida: -")+fmt(Math.abs(profit)));
+}
+function updateMarket(){
+ STOCKS.forEach(s=>{
+  const st=g.stocks[s.id];
+  st.price=Math.max(1,st.price*(1+(Math.random()-.48)*s.vol));
+  st.history.push(st.price);st.history=st.history.slice(-20);
+ });
+ renderTop();renderStocks();save();
+}
+
+const MISSIONS=[
+{id:"first",name:"Primeros pasos",desc:"Ganà $1.000 en total.",reward:250,test:()=>g.totalEarned>=1000},
+{id:"builder",name:"Magnate constructor",desc:"Comprá 10 niveles empresariales.",reward:1000,test:()=>Object.values(g.divisions).reduce((a,b)=>a+b,0)>=10},
+{id:"investor",name:"Inversor",desc:"Comprá al menos una acción.",reward:1500,test:()=>STOCKS.some(s=>g.stocks[s.id].shares>0)},
+{id:"team",name:"Trabajo en equipo",desc:"Contratá 3 empleados.",reward:5000,test:()=>g.hires.length>=3},
+{id:"million",name:"Primer millón",desc:"Llegá a una valoración de $1.000.000.",reward:25000,test:()=>valuation()>=1000000},
+{id:"clicks",name:"Dedo veloz",desc:"Tocá el botón 100 veces.",reward:2000,test:()=>g.taps>=100}
+];
+function claimMission(id){
+ const m=MISSIONS.find(x=>x.id===id);
+ if(g.missions.includes(id)||!m.test())return;
+ g.missions.push(id);earn(m.reward,"Misión completada: "+m.name);
+ moneySound();render();save();toast("🎯 Recompensa: "+fmt(m.reward));
+}
+
+function renderTop(){
+ $("cash").textContent=fmt(g.cash);
+ $("income").textContent=fmt(income())+"/s";
+ $("level").textContent=1+Math.floor(Math.log10(Math.max(1,valuation())));
+ $("clickValue").textContent="+"+fmt(clickPower());
+ $("valuation").textContent=fmt(valuation());$("earned").textContent=fmt(g.totalEarned);
+ $("taps").textContent=g.taps.toLocaleString();$("upgradeCount").textContent=g.upgrades.length;
+ $("teamCount").textContent=g.hires.length;$("cores").textContent=g.cores;
+ $("portfolioValue").textContent=fmt(portfolio());$("investedValue").textContent=fmt(invested());
+ const p=portfolio()-invested();
+ $("profitValue").textContent=(p>=0?"+":"-")+fmt(Math.abs(p));
+ $("profitValue").className=p>=0?"positive":"negative";
+ $("bonusBtn").disabled=g.bonusClaimed;
+ $("bonusBtn").textContent=g.bonusClaimed?"✅ Bono reclamado":"🎁 Reclamar bono inicial de $1.000";
+ $("soundBtn").textContent=g.sound?"🔊 Sonido: activado":"🔇 Sonido: desactivado";
+}
+function renderDivisions(){
+ $("businessList").innerHTML=DIVS.map(d=>{
+  const n=g.divisions[d.id]||0,cost=Math.floor(d.cost*Math.pow(d.growth,n));
+  return `<div class="item"><div class="ico">${d.icon}</div><div class="details"><b>${d.name} <span class="tag">Nivel ${n}</span></b><p>${d.desc}</p><span class="positive small">+${fmt(n*d.base*mult())}/segundo</span></div><div class="action"><b>${fmt(cost)}</b><button ${g.cash<cost?"disabled":""} onclick="Game.buyDivision('${d.id}')">Comprar +1</button></div></div>`;
+ }).join("");
+}
+function renderUpgrades(){
+ $("upgradeList").innerHTML=UPGRADES.map(u=>{
+  const own=has(u.id);
+  return `<div class="item"><div class="ico">${u.icon}</div><div class="details"><b>${u.name} ${own?'<span class="tag">COMPRADA</span>':""}</b><p>${u.desc}</p></div><div class="action"><b>${own?"Lista":fmt(u.cost)}</b><button ${own||g.cash<u.cost?"disabled":""} onclick="Game.buyUpgrade('${u.id}')">${own?"✓ Lista":"Comprar"}</button></div></div>`;
+ }).join("");
+}
+function renderTeam(){
+ $("teamList").innerHTML=HIRES.map(h=>{
+  const own=g.hires.includes(h.id);
+  return `<div class="item"><div class="ico">${h.icon}</div><div class="details"><b>${h.name} ${own?'<span class="tag">CONTRATADO</span>':""}</b><p>${h.desc}</p><span class="positive small">+${h.bonus*100}% de producción</span></div><div class="action"><b>${own?"Contratado":fmt(h.cost)}</b><button ${own||g.cash<h.cost?"disabled":""} onclick="Game.hire('${h.id}')">${own?"✓ Listo":"Contratar"}</button></div></div>`;
+ }).join("");
+}
+function renderStocks(){
+ $("stockList").innerHTML=STOCKS.map(s=>{
+  const st=g.stocks[s.id],p=st.shares*st.price-st.invested;
+  return `<div class="item"><div class="ico">${s.icon}</div><div class="details"><b>${s.name} <span class="tag">${s.symbol}</span></b><p>Acciones: ${st.shares.toLocaleString()}</p><b>${fmt(st.price)} por acción</b><p class="${p>=0?"positive":"negative"}">Resultado: ${p>=0?"+":"-"}${fmt(Math.abs(p))}</p></div><div class="action"><button ${g.cash<st.price?"disabled":""} onclick="Game.buyStock('${s.id}',false)">Comprar 1</button><button ${g.cash<st.price?"disabled":""} onclick="Game.buyStock('${s.id}',true)">Comprar máximo</button><button ${st.shares<=0?"disabled":""} onclick="Game.sellStock('${s.id}')">Vender todo</button></div></div>`;
+ }).join("");
+}
+function renderMissions(){
+ $("missionList").innerHTML=MISSIONS.map(m=>{
+  const done=g.missions.includes(m.id),ready=m.test();
+  return `<div class="item"><div class="ico">${done?"🏆":"🎯"}</div><div class="details"><b>${m.name} ${done?'<span class="tag">COMPLETADA</span>':ready?'<span class="tag">LISTA</span>':""}</b><p>${m.desc}</p><span class="positive small">Premio: ${fmt(m.reward)}</span></div><div class="action"><button ${done||!ready?"disabled":""} onclick="Game.claimMission('${m.id}')">${done?"Reclamada":ready?"Reclamar":"En progreso"}</button></div></div>`;
+ }).join("");
+}
+function renderStats(){
+ const rows=[["Total ganado",fmt(g.totalEarned)],["Ingresos por segundo",fmt(income())],["Ganancia por toque",fmt(clickPower())],["Valor del imperio",fmt(valuation())],["Cartera de inversiones",fmt(portfolio())],["Multiplicador de producción","x"+mult().toFixed(2)],["Toques",g.taps],["Núcleos de prestigio",g.cores]];
+ $("analytics").innerHTML=rows.map(([a,b])=>`<div class="item"><div class="details"><span class="muted small">${a}</span><b>${b}</b></div></div>`).join("");
+ $("activityLog").innerHTML=g.log.length?g.log.map(x=>`<div>${x}</div>`).join(""):"<div>¡Bienvenido, fundador! Tu imperio empieza acá.</div>";
+}
+function render(){renderTop();renderDivisions();renderUpgrades();renderTeam();renderStocks();renderMissions();renderStats();}
+function switchTab(id){
+ document.querySelectorAll("[id^='tab-']").forEach(e=>e.classList.add("hidden"));
+ $("tab-"+id).classList.remove("hidden");
+ document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+}
+function prestige(){
+ if(valuation()<1000000){toast("Necesitás $1.000.000 de valoración.");return;}
+ if(!confirm("Esto reinicia dinero, empresas, mejoras y empleados. ¿Continuar?"))return;
+ const cores=Math.max(1,Math.floor(Math.sqrt(valuation()/1000000)));
+ g.cores+=cores;g.cash=500;g.totalEarned=0;g.taps=0;
+ g.divisions={};DIVS.forEach(d=>g.divisions[d.id]=0);
+ g.upgrades=[];g.hires=[];g.missions=[];g.bonusClaimed=false;
+ log("Prestigio conseguido: +"+cores+" núcleos");
+ render();save();toast("🌌 ¡Nuevo comienzo con bonus permanente!");
+}
+function reset(){
+ if(!confirm("¿Borrar todo el progreso guardado?"))return;
+ g=fresh();render();save();toast("Partida reiniciada.");
+}
+function exportSave(){
+ const code=btoa(unescape(encodeURIComponent(JSON.stringify(g))));
+ prompt("Copiá y guardá este código:",code);
+}
+function importSave(){
+ const code=prompt("Pegá tu código de guardado:");if(!code)return;
+ try{
+  const d=JSON.parse(decodeURIComponent(escape(atob(code))));
+  if(typeof d.cash!=="number")throw Error();
+  g={...fresh(),...d};g.divisions={...fresh().divisions,...(d.divisions||{})};
+  g.upgrades=d.upgrades||[];g.hires=d.hires||[];g.stocks=d.stocks||{};
+  g.missions=d.missions||[];g.log=d.log||[];initStocks();render();save();
+  toast("Partida importada correctamente.");
+ }catch(e){toast("Ese código no es válido.");}
+}
+
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+$("workBtn").addEventListener("click",work);
+$("startBtn").addEventListener("click",()=>{switchTab("home");toast("¡Empezaste! Tocá GENERAR DINERO.");});
+$("bonusBtn").addEventListener("click",bonus);
+$("saveBtn").addEventListener("click",()=>{save();toast("Partida guardada.");});
+$("soundBtn").addEventListener("click",()=>{g.sound=!g.sound;if(g.sound)moneySound();renderTop();save();});
+$("exportBtn").addEventListener("click",exportSave);
+$("importBtn").addEventListener("click",importSave);
+$("prestigeBtn").addEventListener("click",prestige);
+$("resetBtn").addEventListener("click",reset);
+window.Game={buyDivision,buyUpgrade,hire,buyStock,sellStock,claimMission};
+
+load();render();
+setInterval(()=>{const n=income();if(n>0)earn(n);render();},1000);
+setInterval(updateMarket,5000);
+setInterval(save,15000);
+window.addEventListener("beforeunload",save);
+})();
+</script>
+</body>
+</html>
